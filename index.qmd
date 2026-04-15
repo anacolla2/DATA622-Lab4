@@ -24,12 +24,12 @@ from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 ```
 
-In this lab you are going to be using resampling techniques (cross-validation
-and the bootstrap) along with regularization (ridge regression and the lasso) to
-rank basketball players based on their performance during the 2022 NBA season.
-
-To get the most out of this lab, you do not need to be an expert on the NBA, but
-you do need to pay attention to the following background information.
+In this lab you are going to be using **resampling techniques (cross-validation
+and the bootstrap)** along with **regularization (ridge regression and the
+lasso)** to rank basketball players based on their performance during the 2022
+NBA season. To get the most out of this lab, you do not need to be an expert on
+the NBA, but you do need to pay attention to the following background
+information.
 
 Basketball is a sport played between two teams. Each team has 12 total players,
 but only 5 are on the court for each team at a given time. The goal of the game
@@ -337,3 +337,11 @@ during the meetup. Can you tell me what it is?
 ```{python}
 
 ```
+
+--------------------------------------------------------------------------------
+
+# Bibliography
+
+Module 6- Resampling and Cross Validation
+
+<https://georgehagstrom.github.io/DATA622Spring2026/modules/module6.html>

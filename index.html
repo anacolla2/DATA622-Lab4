@@ -115,6 +115,7 @@ window.Quarto = {
   <li><a href="#problem-2-possession-weights" id="toc-problem-2-possession-weights" class="nav-link" data-scroll-target="#problem-2-possession-weights">Problem 2: Possession Weights</a></li>
   <li><a href="#problem-3-interpreting-bootstrap-uncertainty" id="toc-problem-3-interpreting-bootstrap-uncertainty" class="nav-link" data-scroll-target="#problem-3-interpreting-bootstrap-uncertainty">Problem 3: Interpreting Bootstrap Uncertainty</a></li>
   <li><a href="#extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" id="toc-extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" class="nav-link" data-scroll-target="#extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations">Extra Credit (5 Points): Ridge versus Lasso and Confidence/Credible Interval Calculations</a></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Bibliography</a></li>
   </ul>
 </nav>
 </div>
@@ -140,8 +141,7 @@ window.Quarto = {
 </header>
 
 
-<p>In this lab you are going to be using resampling techniques (cross-validation and the bootstrap) along with regularization (ridge regression and the lasso) to rank basketball players based on their performance during the 2022 NBA season.</p>
-<p>To get the most out of this lab, you do not need to be an expert on the NBA, but you do need to pay attention to the following background information.</p>
+<p>In this lab you are going to be using <strong>resampling techniques (cross-validation and the bootstrap)</strong> along with <strong>regularization (ridge regression and the lasso)</strong> to rank basketball players based on their performance during the 2022 NBA season. To get the most out of this lab, you do not need to be an expert on the NBA, but you do need to pay attention to the following background information.</p>
 <p>Basketball is a sport played between two teams. Each team has 12 total players, but only 5 are on the court for each team at a given time. The goal of the game is to score more points than the other team during the 48 minutes of game time. Points are scored by “shooting” a ball into a 10 foot tall metal hoop called the “basket”. If you want to watch the gameplay, [<a href="https://www.youtube.com/watch?v=LPDnemFoqVk">skim this video</a>]. Or, you can watch [<a href="https://www.youtube.com/watch?v=DJDK0GBUOhc">this 8 minute video that explains the rules</a>].</p>
 <p>Traditionally, basketball players have been evaluated based on their individual statistics, such as the number of points that they score in a game, the number of “rebounds” they get (a rebound is when a player catches the ball after a missed shot), the number of “steals” (when a player takes the ball from the other team), and more. However, basketball is a complicated team sport, and the actions of all five players on a team contribute to these individual statistics.</p>
 <p>The goal of capturing these more abstract contributions to success has led to the concept of “plus-minus”, which looks at how the presence or absence of a player on the court correlates with the scoring margin of the team. The idea is to model what happens in a basketball game by assigning each player on both teams a “coefficient”, which will be called “RAPM” during this homework assignment. “<strong>RAPM” stands for Regularized Adjusted Plus Minus</strong>, and it measures the contribution of each player to the expected point differential between the two teams. A player with a RAPM of 3 is expected to add 3 points to their team’s net performance for every 100 possessions of a basketball game (a possession is defined as a period of the game where a single team has control of the ball, games consist of a series of alternating possessions and there are usually about 200 possessions in a game, 100 per team).<br>
@@ -157,9 +157,9 @@ window.Quarto = {
 <p>Here, the sum is over all the different players in the dataset, and the coefficient <span class="math inline">\(c_{ij}\)</span> is +1 if that player <span class="math inline">\(j\)</span> was on the court during stint <span class="math inline">\(i\)</span> and playing for the “home” team, and -1 if they were on the court for the “road” team. The coefficient is <span class="math inline">\(0\)</span> otherwise. The “home” team and “road” team distinction allows us to use the same data for players who were playing against each other. The “margin” variable is the point differential during the stint normalized to points per 100 possessions.</p>
 <p>The dataset to fit this model is contained in [<a href="https://github.com/georgehagstrom/DATA622Spring2026/blob/main/website/assignments/labs/labData/nba_stint_data.csv">nba_stint_data.csv</a>]</p>
 <p>Let’s take a look at it:</p>
-<div id="ca160121" class="cell" data-execution_count="3">
+<div id="7254f8ef" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nba_stints.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
 
@@ -498,7 +498,7 @@ For ridge regression interpreted as Bayesian statistics, there is an exact formu
 Use the code below and calculate the Bayesian standard errors for each ‘RAPM’ coefficient. Make a plot of the Bayesian standard errors versus minutes played and compare to the standard errors calculated from the bootstrap. In which part of the range is the agreement highest? In which part is the disagreement highest? Focusing on the areas where the disagreement is highest, put yourself in the shoes of someone using the model and discuss which estimate of uncertainty is more realistic and why.</p>
 <p>(<em>You will need to adapt the code below to your variable names and data structures.</em>)</p>
 </section>
-<div id="d2de4195" class="cell" data-execution_count="4">
+<div id="c4ebadc6" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code to calculate standard errors and Bayesian credible intervals</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Here MarginVector is your Target</span></span>
@@ -527,14 +527,18 @@ Use the code below and calculate the Bayesian standard errors for each ‘RAPM�
 </details>
 </div>
 </section>
-<section id="extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" class="level2">
+<section id="extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" class="level2 alert alert-dismissible alert-light">
 <h2 class="anchored" data-anchor-id="extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations">Extra Credit (5 Points): Ridge versus Lasso and Confidence/Credible Interval Calculations</h2>
-<p>(a) An alternative to ridge regression that is used for variable selection is called the Lasso. The Lasso differs penalty causes a</p>
-<p>large number of model coefficients to be zero, making it a good tool for variable selection and for creating interpretable models.</p>
-<p>Use ‘LassoCV’ to calculate the ‘RAPM’ coefficients. I recommend using regularization weights that range between <span class="math inline">\(10^{-4}\)</span> and <span class="math inline">\(10^2\)</span></p>
-<p>(the scale needs to be different compared to ridge regression).</p>
+<p>An alternative to ridge regression that is used for variable selection is called the Lasso. The Lasso differs penalty causes a large number of model coefficients to be zero, making it a good tool for variable selection and for creating interpretable models.</p>
+<p>Use <code>LassoCV</code> to calculate the ‘RAPM’ coefficients. I recommend using regularization weights that range between <span class="math inline">\(10^{-4}\)</span> and <span class="math inline">\(10^2\)</span> (the scale needs to be different compared to ridge regression).</p>
 <p>Compare the ‘RAPM’ values calculated with lasso to those calculated with ridge regression. Are there any notable differences in the top 20 players? Find the 10 players with the largest difference between lasso RAPM and Ridge RAPM in both directions (ridge greater than lasso and lasso greater than ridge). Within the players where there was large disagreement, consider how the players performed in the next NBA season (you may do this however you like, I recommend reading media reports about those players during the next season) and determine which model was more correct when it comes to players with large disagreements.</p>
-<p>(b) There is a subtle conceptual flaw in how the confidence or credible intervals were calculated in this lab. This is apparent if you paid very close attention during the meetup. Can you tell me what it is?</p>
+<p>There is a subtle conceptual flaw in how the confidence or credible intervals were calculated in this lab. This is apparent if you paid very close attention during the meetup. Can you tell me what it is?</p>
+</section>
+<hr>
+<section id="bibliography" class="level1">
+<h1>Bibliography</h1>
+<p>Module 6- Resampling and Cross Validation</p>
+<p><a href="https://georgehagstrom.github.io/DATA622Spring2026/modules/module6.html" class="uri">https://georgehagstrom.github.io/DATA622Spring2026/modules/module6.html</a></p>
 </section>
 
 </main>
