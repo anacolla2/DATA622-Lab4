@@ -6,8 +6,9 @@ format:
     theme: litera
     code-overflow: wrap
     code-block-bg: true
+    highlight-style: flatly
 toc: true
-toc-expand: 6
+toc-depth: 6
 toc-location: right
 editor: visual
 jupyter: python3
@@ -19,7 +20,12 @@ jupyter: python3
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import RidgeCV
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from IPython.display import HTML
+from sklearn import linear_model
+from sklearn.linear_model import Ridge, RidgeCV, LassoCV
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
 ```
@@ -50,20 +56,21 @@ actions of all five players on a team contribute to these individual statistics.
 The goal of capturing these more abstract contributions to success has led to
 the concept of "plus-minus", which looks at how the presence or absence of a
 player on the court correlates with the scoring margin of the team. The idea is
-to model what happens in a basketball game by assigning each player on both
-teams a "coefficient", which will be called "RAPM" during this homework
-assignment. "**RAPM" stands for Regularized Adjusted Plus Minus**, and it
+to model what happens in a basketball game by assigning each player on **both
+teams a "coefficient", which will be called "RAPM"** during this homework
+assignment. "**RAPM" stands for Regularized Adjusted Plus Minus**, **and it
 measures the contribution of each player to the expected point differential
-between the two teams. A player with a RAPM of 3 is expected to add 3 points to
-their team's net performance for every 100 possessions of a basketball game (a
-possession is defined as a period of the game where a single team has control of
-the ball, games consist of a series of alternating possessions and there are
-usually about 200 possessions in a game, 100 per team). \
+between the two teams**. A player with a RAPM of 3 is expected to add 3 points
+to their team's net performance for every 100 possessions of a basketball game
+(a possession is defined as a period of the game where a single team has control
+of the ball, games consist of a series of alternating possessions and there are
+usually about 200 possessions in a game, 100 per team).\
 
 Suppose that two teams are playing against each other, and that the 'lineups' of
 the two teams stay the same for a certain number of possessions, call it
-`num_pos`. This period of time with constant lineups is called a `stint`, and we
-can model the probability distribution for the point 'margin', defined as:
+`num_pos`. This period of time with constant lineups is called a `stint`, and
+**we can model the probability distribution for the point "margin",** defined
+as:
 
 $$
 \mathrm{points\_home} - \mathrm{points\_road})\cdot \frac{100}{\mathrm{n\_pos}}
@@ -92,19 +99,19 @@ Let's take a look at it:
 #| echo: False
 #| eval: True
 
-nba_stints = pd.read_csv("https://raw.githubusercontent.com/georgehagstrom/DATA622Spring2026/main/website/assignments/labs/labData/nba_stint_data.csv")
+stints= pd.read_csv("https://raw.githubusercontent.com/georgehagstrom/DATA622Spring2026/main/website/assignments/labs/labData/nba_stint_data.csv")
 ```
 
 ```{python}
-nba_stints.head(10)
+stints.head(10)
 ```
 
 Here you can see that each row corresponds to a stint where the players on the
 court didn't change. The `n_pos` variable is the number of possessions that took
 place during that stint. The `home_points` and `away_points` are the number of
 points scored by the home and away teams respectively. The `minutes` describes
-how long in minutes the stint lasted, and the `margin` is the target variable
-(defined earlier). The features in column 7 onwards are labeled by player ids,
+how long in minutes the stint lasted, and **the `margin` is the target variable
+(defined earlier)**. The features in column 7 onwards are labeled by player ids,
 and the value in each cell corresponds to the $c_i$ values for that stint
 (whether the player was on the court for the home team, road team, or neither).
 You can recover the identity of the players from the
@@ -124,54 +131,208 @@ cross-validation to estimate the out of sample root mean squared error and
 compare it to the in sample error, you may use `RidgeCV` with $alpha=1e-8$ to
 keep consistency with the rest of the assignment, or use `LinearRegression`.
 Make sure `fit_intercept=True`, the intercept corresponds to the home court
-advantage, and do not use `sample_weight`. \
+advantage, and do not use `sample_weight`.
 
 Does the difference between in-sample and cross-validated mean squared error
 suggest a major problem with overfitting?
 :::
 
-```{python}
+--------------------------------------------------------------------------------
 
+##### Prep:
+
+The target (*y* variable) is `$margin` and the predictors are the player,
+everything past column 7.
+
+```{python}
+x=stints.iloc[:,7:]
+y= stints["margin"]
 ```
+
+##### Fit the Linear Model:
+
+```{python}
+m1= linear_model.LinearRegression(fit_intercept=True)
+results=m1.fit(x, y)
+```
+
+##### Comparing MSE
+
+```{python}
+#-- In sample--
+y_p= m1.predict(x)
+mse_insamp= mean_squared_error(y, y_p)
+
+#--cross-validated--
+cv= cross_val_score(m1, x, y, scoring="neg_mean_squared_error")
+cv= -cv.mean()
+
+print(f"In-Sample MSE:{mse_insamp}")
+print(f"Cross-Validated MSE:{cv}")
+```
+
+The in-sample mean squared error was lower than the cross validated. The error
+is because the predictions come directly from the training datapoints. The
+values are pretty close to each other, I can't say there's an overfitting
+problem here **but** by the nature of the in-sample measurement I would always
+expect it to be lower than the cross validated.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Examining 'RAPM' Coefficients:**
 
 Create a dataframe with the player-ids, the RAPM coefficients, and join it with
-the player names (from the data file shared earlier). Use the stint matrix to
-calculate the number of minutes that each player played ('minutes' variable) and
-add that to the data frame too. Sort the players in descending order by 'RAPM'
-and print the top 20 players by 'RAPM'. What do you notice about their minutes
-played? Look up the names of a few of the top players on the internet- are they
-regarded as top NBA players? \
+the player names (from the data file shared earlier).
+
+Use the stint matrix to calculate the number of minutes that each player played
+(`minutes` variable) and add that to the data frame too.
+
+Sort the players in descending order by 'RAPM' and print the top 20 players by
+'RAPM'. What do you notice about their minutes played? Look up the names of a
+few of the top players on the internet- are they regarded as top NBA players?\
+\
 Make a scatter plot of 'RAPM' versus minutes-played.
 :::
 
-```{python}
+--------------------------------------------------------------------------------
 
+```{python}
+#| echo: true
+#| eval: true
+
+#--Player id df--
+players= pd.read_csv("https://raw.githubusercontent.com/georgehagstrom/DATA622Spring2026/refs/heads/main/website/assignments/labs/labData/player_id.csv")
+
+#--Model RAPM Coefficients--
+rapm=dict(zip(players["player_id"].astype(int), m1.coef_))
+players["rapm"]= players["player_id"].map(rapm)
+
+#--Join Stints--
+#stint matrix
+stints2= stints.iloc[:,7:]
+minutes= stints["minutes"].values
+
+#-- using absolute value because of the "road" -1s--
+stints2= abs(stints2).T
+
+#--Calculate minutes--
+players2= (stints2 * stints["minutes"].values).sum(axis=1)
+players2=players2.to_frame(name= "t_minutes")
+players2.index.name= "player_id"
+players2= players2.reset_index().astype(int)
+
+#-- Joining on players--
+players= players.merge(players2, on="player_id", how= "left")
+players= players.sort_values("rapm", ascending= False)
 ```
+
+The player matrix `stint x player`, transposed, becomes `player x stint`. In
+this shape, I could multiply the array of minutes to produce the minutes played
+per stint.
+
+##### Player Top 20 Lineup
+
+```{python}
+#-- The players have a headshot and the ID's are real!-- 
+top20=pd.DataFrame(players.head(20))
+
+top20= top20.copy()
+
+#-- adding the ids to the base url--
+top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Top 20 by RAPM</h1>"
+p_cards = "".join(
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:13px;'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
+    f"</div>"
+    for player, row in top20.iterrows())
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
+```
+
+I'm not familiar with the NBA, but I can accurately say Lebron James is not in
+this lineup.
+
+```{python}
+#-- fixing sns--
+sns.set_theme(style="whitegrid", palette= "husl")
+plt.rcParams["axes.titlesize"] = 16
+plt.rcParams["axes.titlepad"] = 20
+
+#-- Visualize RAPM--
+sns.scatterplot(data= players, x="t_minutes", y="rapm", alpha= 0.6)
+plt.title("NBA Player RAPM Score vs Total Minutes Played ")
+plt.show()
+```
+
+The scatterplot shows the linear relationship between `rapm` and `t_minutes` is
+basically zero.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Ridge Regression RAPM:**
 
-The results of (b) suggest that the model is attaching extreme values of 'RAPM'
+The results of (b) suggest that the model is attaching extreme values of `RAPM`
 to low minute players, something which can be potentially fixed with
-regularization. Define a vector of regularization parameters 'alpha' on a
-logarithmic scale between \$10\^{-2}\$ and \$10\^{5}\$ (look up \`np.logspace).
-Make this vector contain at least 10 but not more than 200 values of 'alpha'
-(pick based on how fast your computer is). Use 'RidgeCV' to fit a ridge
+regularization. Define a vector of regularization parameters `alpha` on a
+logarithmic scale between $10^{-2}$ and $10^{5}$ (look up `np.logspace`).
+
+Make this vector contain at least 10 but not more than 200 values of `alpha`
+(pick based on how fast your computer is). Use `RidgeCV` to fit a ridge
 regression model, selecting the model with the best value of the
 hyperparameters.
 
-What value of 'alpha' is optimal? Next repeat the same calculation as you did in
-part (b) (you could create a function or just copy the dataframe and replace the
-old 'RAPM' with new 'RAPM'). Look up some of the top players that your model
-identified, are they well regarded by the NBA? Make a scatterplot of 'RAPM'
-versus minutes played.
+What value of `alpha` is optimal? Next, repeat the same calculation as you did
+in part (b) (you could create a function or just copy the dataframe and replace
+the old `RAPM` with new `RAPM`). Look up some of the top players that your model
+identified, are they well regarded by the NBA?
+
+Make a scatterplot of `RAPM` versus minutes played.
 :::
 
-```{python}
+##### Fitting Rdige Model & Alpha Range
 
+```{python}
+#| eval: true
+#| error: false
+#| warning: false
+alpha= np.logspace(-2, 5, 50)
+m2= RidgeCV(alphas=alpha, fit_intercept= True, cv=5)
+m2.fit(x,y)
+```
+
+##### Optimal Value of Alpha
+
+```{python}
+print(f"Optimal Value of alpha: {m2.alpha_.round(2)}")
+```
+
+##### Model 2 Player Top 20 Lineup
+
+```{python}
+#--pulling the ridge values--
+rapm2=dict(zip(players["player_id"].astype(int), m2.coef_))
+players["rapm2"]= players["player_id"].map(rapm2)
+players= players.sort_values("rapm2", ascending= False)
+top20=pd.DataFrame(players.head(20))
+top20= top20.copy()
+
+#-- adding the ids to the base url--
+top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Model 2: Top 20 by RAPM</h1>"
+p_cards = "".join(
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:13px;'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
+    f"</div>"
+    for player, row in top20.iterrows())
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
 ## Problem 2: Possession Weights
@@ -179,37 +340,95 @@ versus minutes played.
 ::: {.alert .alert-dismissible .alert-light}
 #### **Heteroscedasticity in Stints:**
 
-Make a plot of the 'margin' variable as a function of the number of possessions
-in a stint. What do you notice about the variance of 'margin'? Why do you think
+Make a plot of the `margin` variable as a function of the number of possessions
+in a stint. What do you notice about the variance of `margin`? Why do you think
 it is happening?
 :::
+
+The plot below is a funnel shape, it goes from wide variance to low variance. It
+seems symmetrical if sliced at zero. It is an example pf heteroscedasticity as
+the variance is not constant but seems to have a pattern.
+
+```{python}
+sns.scatterplot(data=stints, x="n_pos", y="margin", alpha= 0.3)
+plt.title("Number of Posessions vs Player Margin in a Stint")
+plt.show()
+```
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Implementing Weights Regression:**
 
-The solution to the issue that you observed in 2(a) is something called weighted
-least squares This involves adjusting the error term for each stint based on a
-weight that accounts for whatever factor controls the variance. The new weighted
-model looks like this:
+The solution to the issue that you observed in 2(a) is something called
+**weighted least squares** This involves adjusting the error term for each
+stint, based on a weight that accounts for whatever factor controls the
+variance.
+
+The new weighted model looks like this:
 
 $$
 \mathrm{margin}_i \sim \mathrm{Normal}\left(\sum_{j} c_{ij}\left(\mathrm{RAPM}\right)_j, \frac{\sigma^2}{w_i} \right)
 $$
 
-where $w_i$ is a coefficient that determines how the variance of 'margin' should
-scale for each stint. The idea is that \$w_i\$ should be smaller for stints
-where the variance is high, and larger for stints where the variance is low.
-This forces the model to fit the low-variance stints more closely than the
+where $w_i$ is a coefficient that determines how the variance of `margin` should
+scale for each stint. The idea is that $w_i$ should be smaller for stints where
+the variance is high, and larger for stints where the variance is low. This
+forces the model to fit the low-variance stints more closely than the
 high-variance stints. The correct weights for this problem are the
 $w_i = \mathrm{num\_pos}_i$, which implies that the variance of the margin is
-inversely proportional to the number of stints. \
+inversely proportional to the number of stints.\
+
 Verify this by making a scatter plot of the margin rate times the square root of
-the number of possessions versus the number of possessions. Then recalculate the
-player 'RAPM' coefficients from 1(c) by setting the 'weights' keyword in the
-model fit to be 'n_pos'. \
-\
-How have the rankings of top players changed?
+the number of possessions versus the number of possessions.
+
+Then recalculate the player `RAPM` coefficients from 1(c) by setting the
+`weights` keyword in the model fit to be `n_pos`. How have the rankings of top
+players changed?
 :::
+
+##### Scatterplot for Scaled Margin
+
+```{python}
+stints["correction"]= stints["margin"] * np.sqrt(stints["n_pos"])
+sns.scatterplot(data=stints, x="n_pos", y="correction", alpha= 0.3)
+plt.title("Number of Posessions vs Player Margin (scaled) in a Stint")
+plt.ylabel("Margin Rate x sqrt(Number of Posessions)")
+plt.show()
+```
+
+##### RAPM Recalculation
+
+```{python}
+#-- weights keyword--
+m3= RidgeCV(alphas=alpha, fit_intercept= True)
+m3.fit(x,y, sample_weight= stints["n_pos"])
+
+#--pulling the ridge values--
+rapm3=dict(zip(players["player_id"].astype(int), m3.coef_))
+players["rapm3"]= players["player_id"].map(rapm3)
+players= players.sort_values("rapm3", ascending= False)
+top20=pd.DataFrame(players.head(20))
+top20= top20.copy()
+```
+
+##### Model 3 Player Top 20 Lineup
+
+```{python}
+#-- adding the ids to the base url p3--
+top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Model 3: Top 20 by RAPM</h1>"
+
+p_cards = "".join(
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:13px;'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
+    f"</div>"
+    for player, row in top20.iterrows())
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
+```
 
 ## Problem 3: Interpreting Bootstrap Uncertainty
 
@@ -219,15 +438,83 @@ How have the rankings of top players changed?
 Suppose you are a general manager for a basketball team. You want to identify
 candidate players to add to your team, but you are unsure how certain to be
 about the 'RAPM' coefficients for the model. The bootstrap is a standard
-approach for calculating confidence intervals for model coefficients. Use either
-the 'resample' function from 'sklearn' or 'np.random.choice' along with a loop
-to calculate bootstrap samples of the model coefficients for each player. You
-may use the optimal 'alpha' found during the hyperparameter search in 2(b) for
-all bootstrap fits. Do not forget to resample the weights when bootstrapping!.
+approach for calculating confidence intervals for model coefficients.
+
+Use either the `resample` function from `sklearn` or `np.random.choice` along
+with a loop to calculate bootstrap samples of the model coefficients for each
+player. You may use the optimal `alpha` found during the hyperparameter search
+in 2(b) for all bootstrap fits.
+
+**Do not forget to resample the weights when bootstrapping!**
+
 For the top 20 players, display the RAPM estimates along with the confidence
 interval (calculate 92% intervals or some other high value that isn't 95%). How
 much do the intervals of the top 20 overlap?
 :::
+
+##### Boot Loop
+
+```{python}
+#--calculating bootstrap samples--
+boot=[]
+
+for a in range(400):
+  sampled= np.random.choice(len(y), size=len(y), replace=True)
+  
+  x_a= x.iloc[sampled]
+  y_a= y.iloc[sampled]
+  z_b= stints["n_pos"].values[sampled]
+  
+  m4= Ridge(alpha= m2.alpha_, fit_intercept=True)
+  m4.fit(x_a, y_a, sample_weight= z_b)
+  boot.append(m4.coef_)
+
+boot= np.array(boot)
+```
+
+##### Player CI: Upper and Lower at 92%
+
+```{python}
+#--matching the Player IDs--
+rapm4=dict(zip(players["player_id"].astype(int), m4.coef_))
+cil_map= dict(zip(players["player_id"].astype(int), np.percentile(boot, 4, axis=0)))
+ciu_map= dict(zip(players["player_id"].astype(int), np.percentile(boot, 96, axis=0)))
+
+#-- Adding the Cis
+players= players.copy()
+
+players["rapm4"]= players["player_id"].map(rapm4)
+players["ci_lower"]= players["player_id"].map(cil_map)
+players["ci_upper"]= players["player_id"].map(ciu_map)
+
+players= players.sort_values("rapm4", ascending=False)
+top20= players.head(20).copy()
+top20["ci_range"]= top20["ci_upper"]-top20["ci_lower"]
+```
+
+##### Model 4 Player Top 20 Lineup
+
+```{python}
+#-- adding the ids to the base url p3--
+top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Model 4: Top 20 by RAPM (after Bootstrapping)</h1>"
+
+p_cards = "".join(
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:12px;'>CI Lower: {row.ci_lower:.3f}</div>"
+    f"<div style= 'font-size:12px;'>CI Upper: {row.ci_upper:.3f}</div>"
+    f"<div style= 'font-size:14px; font-weight: bold'>CI Range:{row.ci_range:.3f}</div>"
+    f"</div>"
+    for player, row in top20.iterrows())
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
+```
+
+There is an overlap here in the Top 20
 
 ::: {.alert .alert-dismissible .alert-light}
 #### Impact of Minutes Played on Confidence Intervals:
@@ -235,9 +522,27 @@ much do the intervals of the top 20 overlap?
 One potential use of a model like this is to find players who do not play much
 but who might do well with more opportunity. Calculate the standard errors of
 each coefficient from the bootstrap samples and make a scatterplot of standard
-error versus minutes played. Comment on the relationship between minutes played
-and standard error- does it make sense to you intuitively and/or statistically?
+error versus minutes played.
+
+Comment on the relationship between minutes played and standard error- does it
+make sense to you intuitively and/or statistically?
 :::
+
+```{python}
+players["se"]=np.std(boot, axis=0)
+```
+
+```{python}
+sns.scatterplot(data=players, x="t_minutes", y="se", alpha=0.5)
+plt.title("Standard Error vs Minutes Played")
+plt.show()
+```
+
+The plot is not as dramatic as the funnel earlier but there is still many
+differences in variation on `t_minues` so there is heteroscaticity here. The
+relationship between `se` and `t_minutes` is not strong, but with the alpha at
+0.4 I can notice that the points that overlap have a little curve. Maybe theres
+a nonlinear relationship? I'm not sure.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### Comparison to Bayesian Credible Intervals:
@@ -247,23 +552,23 @@ is a field of statistics based on an interpretation of probability as referring
 to uncertainty about the real world rather than as the frequency of outcomes in
 repeated experiments. In the Bayesian framework, it is normal to talk about the
 probability distribution of model parameters, which leads to the concept of a
-'credible interval', defined as an interval with a certain probability of
-containing the model parameter (a 92\\% credible interval would have a 92\\%
-chance of containing the model parameter). Credible intervals often correspond
-closely to confidence intervals captured using standard statistics, but this
-problem is one case where they diverge sharply. \
+`credible interval`, defined as an interval with a certain probability of
+containing the model parameter (a 92% credible interval would have a 92% chance
+of containing the model parameter). Credible intervals often correspond closely
+to confidence intervals captured using standard statistics, but this problem is
+one case where they diverge sharply.\
 \
 Ridge regression has an interpretation in Bayesian statistics, where the
 regularization parameter corresponds to the strength of a prior belief that the
 model coefficients have a normal distribution centered around zero and with
-variance inversely proportional to the regularization penalty $\alpha$. \
+variance inversely proportional to the regularization penalty $\alpha$.\
 \
 For ridge regression interpreted as Bayesian statistics, there is an exact
 formula for the standard errors and confidence intervals which we can use to
 contrast with the bootstrap estimate. I have provided code below to calculate
 the standard errors and the Bayesian credible intervals (if you are curious
 about the full details \[[read this
-article](https://en.wikipedia.org/wiki/Bayesian_linear_regression)\]. \
+article](https://en.wikipedia.org/wiki/Bayesian_linear_regression)\].\
 \
 Use the code below and calculate the Bayesian standard errors for each 'RAPM'
 coefficient. Make a plot of the Bayesian standard errors versus minutes played
@@ -289,24 +594,23 @@ structures.*)
 # model_ridge is your selected model
 # alpha_opt is the optimal regularization parameter from cross validation
 
-weights = WeightVector.values # Need to do this is WeightVector is a pandas series or df etc
-
-stint_mat = StintMatrix.values # Ditto
-
-margin_vec = MarginVector.values # Ditto
+model_ridge= m4
+weights = stints["n_pos"].values # Need to do this is WeightVector is a pandas series or df etc
+stint_mat = stints2 # Ditto
+margin_vec = stints["margin"].values # Ditto
 
 var = np.average((margin_vec - model_ridge.predict(stint_mat))**2, weights=weights) # We need to incorporate weights into variance calculation
 
-num_players = stint_mat.shape[1]
+num_players = stints2.shape[1]
 
-AMat = (stint_mat * weights.reshape(-1, 1)).T @ stint_mat + alpha_opt * np.eye(num_players)
+AMat = (stints2 * weights.reshape(-1, 1)).T @ stints2 + alpha_opt * np.eye(num_players)
 
 # This is the covariance matrix. You could find very high covariance between players on the same teams
-
 posterior_covariance = var * np.linalg.inv(AMat) 
-
 se_vec = np.sqrt(np.diag(posterior_covariance)) # These are the standard errors
 ```
+
+## Conclusion
 
 ::: {.alert .alert-dismissible .alert-light}
 ## Extra Credit (5 Points): Ridge versus Lasso and Confidence/Credible Interval Calculations
@@ -316,27 +620,45 @@ the Lasso. The Lasso differs penalty causes a large number of model coefficients
 to be zero, making it a good tool for variable selection and for creating
 interpretable models.
 
-Use `LassoCV` to calculate the 'RAPM' coefficients. I recommend using
+Use `LassoCV` to calculate the `RAPM` coefficients. I recommend using
 regularization weights that range between $10^{-4}$ and $10^2$ (the scale needs
 to be different compared to ridge regression).
 
-Compare the 'RAPM' values calculated with lasso to those calculated with ridge
-regression. Are there any notable differences in the top 20 players? Find the 10
-players with the largest difference between lasso RAPM and Ridge RAPM in both
-directions (ridge greater than lasso and lasso greater than ridge). Within the
-players where there was large disagreement, consider how the players performed
-in the next NBA season (you may do this however you like, I recommend reading
-media reports about those players during the next season) and determine which
-model was more correct when it comes to players with large disagreements.
+Compare the `RAPM` values calculated with lasso to those calculated with ridge
+regression. Are there any notable differences in the top 20 players?
 
-There is a subtle conceptual flaw in how the confidence or credible intervals
+Find the 10 players with the largest difference between lasso RAPM and Ridge
+RAPM in both directions (ridge greater than lasso and lasso greater than ridge).
+Within the players where there was large disagreement, consider how the players
+performed in the next NBA season (you may do this however you like, I recommend
+reading media reports about those players during the next season) and determine
+which model was more correct when it comes to players with large disagreements.
+
+**There is a subtle conceptual flaw in how the confidence or credible intervals
 were calculated in this lab. This is apparent if you paid very close attention
-during the meetup. Can you tell me what it is?
+during the meetup. Can you tell me what it is?**
 :::
 
 ```{python}
+#| echo: True
+#| eval: False
 
+#--reg weights-- 
+lasso_alpha=
+
+#--Lasso RAPM Coefficients--
+
+#-- Lasso vs Ridge Coefficients-- 
+
+
+top20["ci_range"]= top20["ci_upper"]-top20["ci_lower"]
 ```
+
+The conceptual flaw in how the confidence intervals were calculated might be
+that there is a bottleneck in the amount of players that can be on the court.
+Confidence intervals are percentages indicating where an observation falls.
+There is a cap the probability of being on the court and i dont think that is
+accounted for here.
 
 --------------------------------------------------------------------------------
 

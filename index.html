@@ -63,7 +63,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="index_files/libs/quarto-html/anchor.min.js"></script>
 <link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
@@ -107,13 +106,41 @@ window.Quarto = {
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="6">
+  <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#problem-1-ridge-regression-for-inference" id="toc-problem-1-ridge-regression-for-inference" class="nav-link active" data-scroll-target="#problem-1-ridge-regression-for-inference">Problem 1: Ridge Regression for Inference</a></li>
-  <li><a href="#problem-2-possession-weights" id="toc-problem-2-possession-weights" class="nav-link" data-scroll-target="#problem-2-possession-weights">Problem 2: Possession Weights</a></li>
-  <li><a href="#problem-3-interpreting-bootstrap-uncertainty" id="toc-problem-3-interpreting-bootstrap-uncertainty" class="nav-link" data-scroll-target="#problem-3-interpreting-bootstrap-uncertainty">Problem 3: Interpreting Bootstrap Uncertainty</a></li>
+  <li><a href="#problem-1-ridge-regression-for-inference" id="toc-problem-1-ridge-regression-for-inference" class="nav-link active" data-scroll-target="#problem-1-ridge-regression-for-inference">Problem 1: Ridge Regression for Inference</a>
+  <ul>
+  <li><a href="#ordinary-linear-regression" id="toc-ordinary-linear-regression" class="nav-link" data-scroll-target="#ordinary-linear-regression"><strong>Ordinary Linear Regression:</strong></a></li>
+  <li><a href="#prep" id="toc-prep" class="nav-link" data-scroll-target="#prep">Prep:</a></li>
+  <li><a href="#fit-the-linear-model" id="toc-fit-the-linear-model" class="nav-link" data-scroll-target="#fit-the-linear-model">Fit the Linear Model:</a></li>
+  <li><a href="#comparing-mse" id="toc-comparing-mse" class="nav-link" data-scroll-target="#comparing-mse">Comparing MSE</a></li>
+  <li><a href="#examining-rapm-coefficients" id="toc-examining-rapm-coefficients" class="nav-link" data-scroll-target="#examining-rapm-coefficients"><strong>Examining ‘RAPM’ Coefficients:</strong></a></li>
+  <li><a href="#player-top-20-lineup" id="toc-player-top-20-lineup" class="nav-link" data-scroll-target="#player-top-20-lineup">Player Top 20 Lineup</a></li>
+  <li><a href="#ridge-regression-rapm" id="toc-ridge-regression-rapm" class="nav-link" data-scroll-target="#ridge-regression-rapm"><strong>Ridge Regression RAPM:</strong></a></li>
+  <li><a href="#fitting-rdige-model-alpha-range" id="toc-fitting-rdige-model-alpha-range" class="nav-link" data-scroll-target="#fitting-rdige-model-alpha-range">Fitting Rdige Model &amp; Alpha Range</a></li>
+  <li><a href="#optimal-value-of-alpha" id="toc-optimal-value-of-alpha" class="nav-link" data-scroll-target="#optimal-value-of-alpha">Optimal Value of Alpha</a></li>
+  <li><a href="#model-2-player-top-20-lineup" id="toc-model-2-player-top-20-lineup" class="nav-link" data-scroll-target="#model-2-player-top-20-lineup">Model 2 Player Top 20 Lineup</a></li>
+  </ul></li>
+  <li><a href="#problem-2-possession-weights" id="toc-problem-2-possession-weights" class="nav-link" data-scroll-target="#problem-2-possession-weights">Problem 2: Possession Weights</a>
+  <ul>
+  <li><a href="#heteroscedasticity-in-stints" id="toc-heteroscedasticity-in-stints" class="nav-link" data-scroll-target="#heteroscedasticity-in-stints"><strong>Heteroscedasticity in Stints:</strong></a></li>
+  <li><a href="#implementing-weights-regression" id="toc-implementing-weights-regression" class="nav-link" data-scroll-target="#implementing-weights-regression"><strong>Implementing Weights Regression:</strong></a></li>
+  <li><a href="#scatterplot-for-scaled-margin" id="toc-scatterplot-for-scaled-margin" class="nav-link" data-scroll-target="#scatterplot-for-scaled-margin">Scatterplot for Scaled Margin</a></li>
+  <li><a href="#rapm-recalculation" id="toc-rapm-recalculation" class="nav-link" data-scroll-target="#rapm-recalculation">RAPM Recalculation</a></li>
+  <li><a href="#model-3-player-top-20-lineup" id="toc-model-3-player-top-20-lineup" class="nav-link" data-scroll-target="#model-3-player-top-20-lineup">Model 3 Player Top 20 Lineup</a></li>
+  </ul></li>
+  <li><a href="#problem-3-interpreting-bootstrap-uncertainty" id="toc-problem-3-interpreting-bootstrap-uncertainty" class="nav-link" data-scroll-target="#problem-3-interpreting-bootstrap-uncertainty">Problem 3: Interpreting Bootstrap Uncertainty</a>
+  <ul>
+  <li><a href="#calculate-confidence-intervals-using-the-bootstrap" id="toc-calculate-confidence-intervals-using-the-bootstrap" class="nav-link" data-scroll-target="#calculate-confidence-intervals-using-the-bootstrap">Calculate Confidence Intervals Using the Bootstrap:</a></li>
+  <li><a href="#boot-loop" id="toc-boot-loop" class="nav-link" data-scroll-target="#boot-loop">Boot Loop</a></li>
+  <li><a href="#player-ci-upper-and-lower-at-92" id="toc-player-ci-upper-and-lower-at-92" class="nav-link" data-scroll-target="#player-ci-upper-and-lower-at-92">Player CI: Upper and Lower at 92%</a></li>
+  <li><a href="#model-4-player-top-20-lineup" id="toc-model-4-player-top-20-lineup" class="nav-link" data-scroll-target="#model-4-player-top-20-lineup">Model 4 Player Top 20 Lineup</a></li>
+  <li><a href="#impact-of-minutes-played-on-confidence-intervals" id="toc-impact-of-minutes-played-on-confidence-intervals" class="nav-link" data-scroll-target="#impact-of-minutes-played-on-confidence-intervals">Impact of Minutes Played on Confidence Intervals:</a></li>
+  <li><a href="#comparison-to-bayesian-credible-intervals" id="toc-comparison-to-bayesian-credible-intervals" class="nav-link" data-scroll-target="#comparison-to-bayesian-credible-intervals">Comparison to Bayesian Credible Intervals:</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" id="toc-extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" class="nav-link" data-scroll-target="#extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations">Extra Credit (5 Points): Ridge versus Lasso and Confidence/Credible Interval Calculations</a></li>
   <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">Bibliography</a></li>
   </ul>
@@ -144,9 +171,9 @@ window.Quarto = {
 <p>In this lab you are going to be using <strong>resampling techniques (cross-validation and the bootstrap)</strong> along with <strong>regularization (ridge regression and the lasso)</strong> to rank basketball players based on their performance during the 2022 NBA season. To get the most out of this lab, you do not need to be an expert on the NBA, but you do need to pay attention to the following background information.</p>
 <p>Basketball is a sport played between two teams. Each team has 12 total players, but only 5 are on the court for each team at a given time. The goal of the game is to score more points than the other team during the 48 minutes of game time. Points are scored by “shooting” a ball into a 10 foot tall metal hoop called the “basket”. If you want to watch the gameplay, [<a href="https://www.youtube.com/watch?v=LPDnemFoqVk">skim this video</a>]. Or, you can watch [<a href="https://www.youtube.com/watch?v=DJDK0GBUOhc">this 8 minute video that explains the rules</a>].</p>
 <p>Traditionally, basketball players have been evaluated based on their individual statistics, such as the number of points that they score in a game, the number of “rebounds” they get (a rebound is when a player catches the ball after a missed shot), the number of “steals” (when a player takes the ball from the other team), and more. However, basketball is a complicated team sport, and the actions of all five players on a team contribute to these individual statistics.</p>
-<p>The goal of capturing these more abstract contributions to success has led to the concept of “plus-minus”, which looks at how the presence or absence of a player on the court correlates with the scoring margin of the team. The idea is to model what happens in a basketball game by assigning each player on both teams a “coefficient”, which will be called “RAPM” during this homework assignment. “<strong>RAPM” stands for Regularized Adjusted Plus Minus</strong>, and it measures the contribution of each player to the expected point differential between the two teams. A player with a RAPM of 3 is expected to add 3 points to their team’s net performance for every 100 possessions of a basketball game (a possession is defined as a period of the game where a single team has control of the ball, games consist of a series of alternating possessions and there are usually about 200 possessions in a game, 100 per team).<br>
+<p>The goal of capturing these more abstract contributions to success has led to the concept of “plus-minus”, which looks at how the presence or absence of a player on the court correlates with the scoring margin of the team. The idea is to model what happens in a basketball game by assigning each player on <strong>both teams a “coefficient”, which will be called “RAPM”</strong> during this homework assignment. “<strong>RAPM” stands for Regularized Adjusted Plus Minus</strong>, <strong>and it measures the contribution of each player to the expected point differential between the two teams</strong>. A player with a RAPM of 3 is expected to add 3 points to their team’s net performance for every 100 possessions of a basketball game (a possession is defined as a period of the game where a single team has control of the ball, games consist of a series of alternating possessions and there are usually about 200 possessions in a game, 100 per team).<br>
 </p>
-<p>Suppose that two teams are playing against each other, and that the ‘lineups’ of the two teams stay the same for a certain number of possessions, call it <code>num_pos</code>. This period of time with constant lineups is called a <code>stint</code>, and we can model the probability distribution for the point ‘margin’, defined as:</p>
+<p>Suppose that two teams are playing against each other, and that the ‘lineups’ of the two teams stay the same for a certain number of possessions, call it <code>num_pos</code>. This period of time with constant lineups is called a <code>stint</code>, and <strong>we can model the probability distribution for the point “margin”,</strong> defined as:</p>
 <p><span class="math display">\[
 \mathrm{points\_home} - \mathrm{points\_road})\cdot \frac{100}{\mathrm{n\_pos}}
 \]</span></p>
@@ -157,9 +184,9 @@ window.Quarto = {
 <p>Here, the sum is over all the different players in the dataset, and the coefficient <span class="math inline">\(c_{ij}\)</span> is +1 if that player <span class="math inline">\(j\)</span> was on the court during stint <span class="math inline">\(i\)</span> and playing for the “home” team, and -1 if they were on the court for the “road” team. The coefficient is <span class="math inline">\(0\)</span> otherwise. The “home” team and “road” team distinction allows us to use the same data for players who were playing against each other. The “margin” variable is the point differential during the stint normalized to points per 100 possessions.</p>
 <p>The dataset to fit this model is contained in [<a href="https://github.com/georgehagstrom/DATA622Spring2026/blob/main/website/assignments/labs/labData/nba_stint_data.csv">nba_stint_data.csv</a>]</p>
 <p>Let’s take a look at it:</p>
-<div id="7254f8ef" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nba_stints.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="ac16acb0" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>stints.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div>
 
 
@@ -438,58 +465,1171 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Here you can see that each row corresponds to a stint where the players on the court didn’t change. The <code>n_pos</code> variable is the number of possessions that took place during that stint. The <code>home_points</code> and <code>away_points</code> are the number of points scored by the home and away teams respectively. The <code>minutes</code> describes how long in minutes the stint lasted, and the <code>margin</code> is the target variable (defined earlier). The features in column 7 onwards are labeled by player ids, and the value in each cell corresponds to the <span class="math inline">\(c_i\)</span> values for that stint (whether the player was on the court for the home team, road team, or neither). You can recover the identity of the players from the [<a href="https://github.com/georgehagstrom/DATA622Spring2026/blob/main/website/assignments/labs/labData/player_id.csv">player_id</a>] file.</p>
+<p>Here you can see that each row corresponds to a stint where the players on the court didn’t change. The <code>n_pos</code> variable is the number of possessions that took place during that stint. The <code>home_points</code> and <code>away_points</code> are the number of points scored by the home and away teams respectively. The <code>minutes</code> describes how long in minutes the stint lasted, and <strong>the <code>margin</code> is the target variable (defined earlier)</strong>. The features in column 7 onwards are labeled by player ids, and the value in each cell corresponds to the <span class="math inline">\(c_i\)</span> values for that stint (whether the player was on the court for the home team, road team, or neither). You can recover the identity of the players from the [<a href="https://github.com/georgehagstrom/DATA622Spring2026/blob/main/website/assignments/labs/labData/player_id.csv">player_id</a>] file.</p>
 <p>In the following you will be exploring different ways of calculating the the RAPM model coefficients and interpreting them in terms of player skill.</p>
 <section id="problem-1-ridge-regression-for-inference" class="level2">
 <h2 class="anchored" data-anchor-id="problem-1-ridge-regression-for-inference">Problem 1: Ridge Regression for Inference</h2>
 <section id="ordinary-linear-regression" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="ordinary-linear-regression"><strong>Ordinary Linear Regression:</strong></h4>
-<p>Use ordinary linear regression to fit the model described in the overview. Use cross-validation to estimate the out of sample root mean squared error and compare it to the in sample error, you may use <code>RidgeCV</code> with <span class="math inline">\(alpha=1e-8\)</span> to keep consistency with the rest of the assignment, or use <code>LinearRegression</code>. Make sure <code>fit_intercept=True</code>, the intercept corresponds to the home court advantage, and do not use <code>sample_weight</code>.<br>
-</p>
+<p>Use ordinary linear regression to fit the model described in the overview. Use cross-validation to estimate the out of sample root mean squared error and compare it to the in sample error, you may use <code>RidgeCV</code> with <span class="math inline">\(alpha=1e-8\)</span> to keep consistency with the rest of the assignment, or use <code>LinearRegression</code>. Make sure <code>fit_intercept=True</code>, the intercept corresponds to the home court advantage, and do not use <code>sample_weight</code>.</p>
 <p>Does the difference between in-sample and cross-validated mean squared error suggest a major problem with overfitting?</p>
+</section>
+<hr>
+<section id="prep" class="level5">
+<h5 class="anchored" data-anchor-id="prep">Prep:</h5>
+<p>The target (<em>y</em> variable) is <code>$margin</code> and the predictors are the player, everything past column 7.</p>
+<div id="f3fec5b2" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>stints.iloc[:,<span class="dv">7</span>:]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y<span class="op">=</span> stints[<span class="st">"margin"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fit-the-linear-model" class="level5">
+<h5 class="anchored" data-anchor-id="fit-the-linear-model">Fit the Linear Model:</h5>
+<div id="b2b427c0" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m1<span class="op">=</span> linear_model.LinearRegression(fit_intercept<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>results<span class="op">=</span>m1.fit(x, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="comparing-mse" class="level5">
+<h5 class="anchored" data-anchor-id="comparing-mse">Comparing MSE</h5>
+<div id="56211d16" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-- In sample--</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y_p<span class="op">=</span> m1.predict(x)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mse_insamp<span class="op">=</span> mean_squared_error(y, y_p)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#--cross-validated--</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>cv<span class="op">=</span> cross_val_score(m1, x, y, scoring<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>cv<span class="op">=</span> <span class="op">-</span>cv.mean()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"In-Sample MSE:</span><span class="sc">{</span>mse_insamp<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cross-Validated MSE:</span><span class="sc">{</span>cv<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>In-Sample MSE:4848.181932061575
+Cross-Validated MSE:5132.395505838158</code></pre>
+</div>
+</div>
+<p>The in-sample mean squared error was lower than the cross validated. The error is because the predictions come directly from the training datapoints. The values are pretty close to each other, I can’t say there’s an overfitting problem here <strong>but</strong> by the nature of the in-sample measurement I would always expect it to be lower than the cross validated.</p>
 </section>
 <section id="examining-rapm-coefficients" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="examining-rapm-coefficients"><strong>Examining ‘RAPM’ Coefficients:</strong></h4>
-<p>Create a dataframe with the player-ids, the RAPM coefficients, and join it with the player names (from the data file shared earlier). Use the stint matrix to calculate the number of minutes that each player played (‘minutes’ variable) and add that to the data frame too. Sort the players in descending order by ‘RAPM’ and print the top 20 players by ‘RAPM’. What do you notice about their minutes played? Look up the names of a few of the top players on the internet- are they regarded as top NBA players?<br>
+<p>Create a dataframe with the player-ids, the RAPM coefficients, and join it with the player names (from the data file shared earlier).</p>
+<p>Use the stint matrix to calculate the number of minutes that each player played (<code>minutes</code> variable) and add that to the data frame too.</p>
+<p>Sort the players in descending order by ‘RAPM’ and print the top 20 players by ‘RAPM’. What do you notice about their minutes played? Look up the names of a few of the top players on the internet- are they regarded as top NBA players?<br>
+<br>
 Make a scatter plot of ‘RAPM’ versus minutes-played.</p>
+</section>
+<hr>
+<div id="de980066" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#--Player id df--</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/georgehagstrom/DATA622Spring2026/refs/heads/main/website/assignments/labs/labData/player_id.csv"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#--Model RAPM Coefficients--</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>rapm<span class="op">=</span><span class="bu">dict</span>(<span class="bu">zip</span>(players[<span class="st">"player_id"</span>].astype(<span class="bu">int</span>), m1.coef_))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"rapm"</span>]<span class="op">=</span> players[<span class="st">"player_id"</span>].<span class="bu">map</span>(rapm)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#--Join Stints--</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#stint matrix</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>stints2<span class="op">=</span> stints.iloc[:,<span class="dv">7</span>:]</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>minutes<span class="op">=</span> stints[<span class="st">"minutes"</span>].values</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#-- using absolute value because of the "road" -1s--</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>stints2<span class="op">=</span> <span class="bu">abs</span>(stints2).T</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#--Calculate minutes--</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>players2<span class="op">=</span> (stints2 <span class="op">*</span> stints[<span class="st">"minutes"</span>].values).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>players2<span class="op">=</span>players2.to_frame(name<span class="op">=</span> <span class="st">"t_minutes"</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>players2.index.name<span class="op">=</span> <span class="st">"player_id"</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>players2<span class="op">=</span> players2.reset_index().astype(<span class="bu">int</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#-- Joining on players--</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> players.merge(players2, on<span class="op">=</span><span class="st">"player_id"</span>, how<span class="op">=</span> <span class="st">"left"</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> players.sort_values(<span class="st">"rapm"</span>, ascending<span class="op">=</span> <span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The player matrix <code>stint x player</code>, transposed, becomes <code>player x stint</code>. In this shape, I could multiply the array of minutes to produce the minutes played per stint.</p>
+<section id="player-top-20-lineup" class="level5">
+<h5 class="anchored" data-anchor-id="player-top-20-lineup">Player Top 20 Lineup</h5>
+<div id="601bd07f" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-- The players have a headshot and the ID's are real!-- </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span>pd.DataFrame(players.head(<span class="dv">20</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span> top20.copy()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#-- adding the ids to the base url--</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>top20[<span class="st">"image_url"</span>]<span class="op">=</span> top20[<span class="st">"player_id"</span>].astype(<span class="bu">str</span>).<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"https://cdn.nba.com/headshots/nba/latest/1040x760/</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">.png"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>header<span class="op">=</span> <span class="st">"&lt;h1 style='text-align:center;'&gt;Top 20 by RAPM&lt;/h1&gt;"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>p_cards <span class="op">=</span> <span class="st">""</span>.join(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style='text-align:center;'&gt;"</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;img src='</span><span class="sc">{</span>row<span class="sc">.</span>image_url<span class="sc">}</span><span class="ss">' style='width:90px;'&gt;"</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:13px;'&gt;</span><span class="sc">{</span>row<span class="sc">.</span>player_name<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;RAPM: </span><span class="sc">{</span>row<span class="sc">.</span>rapm<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;Play Time: </span><span class="sc">{</span>row<span class="sc">.</span>t_minutes<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;/div&gt;"</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> player, row <span class="kw">in</span> top20.iterrows())</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>HTML(<span class="ss">f"&lt;div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'&gt;</span><span class="sc">{</span>p_cards<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<div style="display:grid;grid-template-columns:repeat(5,1fr); gap:8px;"><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628221.png" style="width:90px;"><div style="font-size:13px;">Gabe York</div><div style="font-size:12px;">RAPM: 77.399</div><div style="font-size:12px;">Play Time: 53</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629033.png" style="width:90px;"><div style="font-size:13px;">Theo Pinson</div><div style="font-size:12px;">RAPM: 62.877</div><div style="font-size:12px;">Play Time: 316</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203897.png" style="width:90px;"><div style="font-size:13px;">Zach LaVine</div><div style="font-size:12px;">RAPM: 50.272</div><div style="font-size:12px;">Play Time: 2783</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630191.png" style="width:90px;"><div style="font-size:13px;">Isaiah Stewart</div><div style="font-size:12px;">RAPM: 50.138</div><div style="font-size:12px;">Play Time: 1332</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1626153.png" style="width:90px;"><div style="font-size:13px;">Delon Wright</div><div style="font-size:12px;">RAPM: 47.435</div><div style="font-size:12px;">Play Time: 1234</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629027.png" style="width:90px;"><div style="font-size:13px;">Trae Young</div><div style="font-size:12px;">RAPM: 47.427</div><div style="font-size:12px;">Play Time: 2706</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629735.png" style="width:90px;"><div style="font-size:13px;">Chris Silva</div><div style="font-size:12px;">RAPM: 41.990</div><div style="font-size:12px;">Play Time: 7</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631107.png" style="width:90px;"><div style="font-size:13px;">Nikola Jovic</div><div style="font-size:12px;">RAPM: 37.628</div><div style="font-size:12px;">Play Time: 167</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630579.png" style="width:90px;"><div style="font-size:13px;">Jericho Sims</div><div style="font-size:12px;">RAPM: 37.509</div><div style="font-size:12px;">Play Time: 802</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627863.png" style="width:90px;"><div style="font-size:13px;">Danuel House Jr.</div><div style="font-size:12px;">RAPM: 36.865</div><div style="font-size:12px;">Play Time: 830</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630164.png" style="width:90px;"><div style="font-size:13px;">James Wiseman</div><div style="font-size:12px;">RAPM: 36.223</div><div style="font-size:12px;">Play Time: 785</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631109.png" style="width:90px;"><div style="font-size:13px;">Mark Williams</div><div style="font-size:12px;">RAPM: 36.063</div><div style="font-size:12px;">Play Time: 816</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631110.png" style="width:90px;"><div style="font-size:13px;">Jeremy Sochan</div><div style="font-size:12px;">RAPM: 34.273</div><div style="font-size:12px;">Play Time: 1263</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203944.png" style="width:90px;"><div style="font-size:13px;">Julius Randle</div><div style="font-size:12px;">RAPM: 33.438</div><div style="font-size:12px;">Play Time: 2956</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630580.png" style="width:90px;"><div style="font-size:13px;">Joe Wieskamp</div><div style="font-size:12px;">RAPM: 33.412</div><div style="font-size:12px;">Play Time: 41</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630531.png" style="width:90px;"><div style="font-size:13px;">Jaden Springer</div><div style="font-size:12px;">RAPM: 33.313</div><div style="font-size:12px;">Play Time: 89</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2738.png" style="width:90px;"><div style="font-size:13px;">Andre Iguodala</div><div style="font-size:12px;">RAPM: 33.030</div><div style="font-size:12px;">Play Time: 116</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631121.png" style="width:90px;"><div style="font-size:13px;">Bryce McGowens</div><div style="font-size:12px;">RAPM: 33.015</div><div style="font-size:12px;">Play Time: 820</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630598.png" style="width:90px;"><div style="font-size:13px;">Aaron Wiggins</div><div style="font-size:12px;">RAPM: 32.954</div><div style="font-size:12px;">Play Time: 1221</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630209.png" style="width:90px;"><div style="font-size:13px;">Omer Yurtseven</div><div style="font-size:12px;">RAPM: 32.606</div><div style="font-size:12px;">Play Time: 76</div></div></div>
+</div>
+</div>
+<p>I’m not familiar with the NBA, but I can accurately say Lebron James is not in this lineup.</p>
+<div id="5076afba" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-- fixing sns--</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>, palette<span class="op">=</span> <span class="st">"husl"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"axes.titlesize"</span>] <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">"axes.titlepad"</span>] <span class="op">=</span> <span class="dv">20</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#-- Visualize RAPM--</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span> players, x<span class="op">=</span><span class="st">"t_minutes"</span>, y<span class="op">=</span><span class="st">"rapm"</span>, alpha<span class="op">=</span> <span class="fl">0.6</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"NBA Player RAPM Score vs Total Minutes Played "</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The scatterplot shows the linear relationship between <code>rapm</code> and <code>t_minutes</code> is basically zero.</p>
 </section>
 <section id="ridge-regression-rapm" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="ridge-regression-rapm"><strong>Ridge Regression RAPM:</strong></h4>
-<p>The results of (b) suggest that the model is attaching extreme values of ‘RAPM’ to low minute players, something which can be potentially fixed with regularization. Define a vector of regularization parameters ‘alpha’ on a logarithmic scale between $10^{-2}$ and $10^{5}$ (look up `np.logspace). Make this vector contain at least 10 but not more than 200 values of ‘alpha’ (pick based on how fast your computer is). Use ‘RidgeCV’ to fit a ridge regression model, selecting the model with the best value of the hyperparameters.</p>
-<p>What value of ‘alpha’ is optimal? Next repeat the same calculation as you did in part (b) (you could create a function or just copy the dataframe and replace the old ‘RAPM’ with new ‘RAPM’). Look up some of the top players that your model identified, are they well regarded by the NBA? Make a scatterplot of ‘RAPM’ versus minutes played.</p>
+<p>The results of (b) suggest that the model is attaching extreme values of <code>RAPM</code> to low minute players, something which can be potentially fixed with regularization. Define a vector of regularization parameters <code>alpha</code> on a logarithmic scale between <span class="math inline">\(10^{-2}\)</span> and <span class="math inline">\(10^{5}\)</span> (look up <code>np.logspace</code>).</p>
+<p>Make this vector contain at least 10 but not more than 200 values of <code>alpha</code> (pick based on how fast your computer is). Use <code>RidgeCV</code> to fit a ridge regression model, selecting the model with the best value of the hyperparameters.</p>
+<p>What value of <code>alpha</code> is optimal? Next, repeat the same calculation as you did in part (b) (you could create a function or just copy the dataframe and replace the old <code>RAPM</code> with new <code>RAPM</code>). Look up some of the top players that your model identified, are they well regarded by the NBA?</p>
+<p>Make a scatterplot of <code>RAPM</code> versus minutes played.</p>
+</section>
+<section id="fitting-rdige-model-alpha-range" class="level5">
+<h5 class="anchored" data-anchor-id="fitting-rdige-model-alpha-range">Fitting Rdige Model &amp; Alpha Range</h5>
+<div id="ca3fa19e" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>alpha<span class="op">=</span> np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">50</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>m2<span class="op">=</span> RidgeCV(alphas<span class="op">=</span>alpha, fit_intercept<span class="op">=</span> <span class="va">True</span>, cv<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>m2.fit(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<style>#sk-container-id-2 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: #000;
+  --sklearn-color-text-muted: #666;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+}
+
+#sk-container-id-2.light {
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: black;
+  --sklearn-color-background: white;
+  --sklearn-color-border-box: black;
+  --sklearn-color-icon: #696969;
+}
+
+#sk-container-id-2.dark {
+  --sklearn-color-text-on-default-background: white;
+  --sklearn-color-background: #111;
+  --sklearn-color-border-box: white;
+  --sklearn-color-icon: #878787;
+}
+
+#sk-container-id-2 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-2 pre {
+  padding: 0;
+}
+
+#sk-container-id-2 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-2 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-2 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-2 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-2 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-2 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-2 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-2 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-2 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-2 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-2 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-2 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-2 label.sk-toggleable__label {
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+#sk-container-id-2 label.sk-toggleable__label .caption {
+  font-size: 0.6rem;
+  font-weight: lighter;
+  color: var(--sklearn-color-text-muted);
+}
+
+#sk-container-id-2 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-2 div.sk-toggleable__content {
+  display: none;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-2 div.sk-label label.sk-toggleable__label,
+#sk-container-id-2 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-2 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-2 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  line-height: 1.2em;
+}
+
+#sk-container-id-2 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-2 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-2 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-unfitted-level-0);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 0.5em;
+  text-align: center;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-3) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3) 1pt solid;
+  color: var(--sklearn-color-fitted-level-3);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  border: var(--sklearn-color-fitted-level-0) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-0);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  border: var(--sklearn-color-fitted-level-0) 1pt solid;
+  color: var(--sklearn-color-fitted-level-0);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-2 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-unfitted-level-0);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-2 a.estimator_doc_link.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-2 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-2 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+
+.estimator-table {
+    font-family: monospace;
+}
+
+.estimator-table summary {
+    padding: .5rem;
+    cursor: pointer;
+}
+
+.estimator-table summary::marker {
+    font-size: 0.7rem;
+}
+
+.estimator-table details[open] {
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+    padding-bottom: 0.3rem;
+}
+
+.estimator-table .parameters-table {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 0;
+}
+
+.estimator-table .parameters-table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+.estimator-table .parameters-table tr:nth-child(even) {
+    background-color: #f6f6f6;
+}
+
+.estimator-table .parameters-table tr:hover {
+    background-color: #e0e0e0;
+}
+
+.estimator-table table td {
+    border: 1px solid rgba(106, 105, 104, 0.232);
+}
+
+/*
+    `table td`is set in notebook with right text-align.
+    We need to overwrite it.
+*/
+.estimator-table table td.param {
+    text-align: left;
+    position: relative;
+    padding: 0;
+}
+
+.user-set td {
+    color:rgb(255, 94, 0);
+    text-align: left !important;
+}
+
+.user-set td.value {
+    color:rgb(255, 94, 0);
+    background-color: transparent;
+}
+
+.default td {
+    color: black;
+    text-align: left !important;
+}
+
+.user-set td i,
+.default td i {
+    color: black;
+}
+
+/*
+    Styles for parameter documentation links
+    We need styling for visited so jupyter doesn't overwrite it
+*/
+a.param-doc-link,
+a.param-doc-link:link,
+a.param-doc-link:visited {
+    text-decoration: underline dashed;
+    text-underline-offset: .3em;
+    color: inherit;
+    display: block;
+    padding: .5em;
+}
+
+/* "hack" to make the entire area of the cell containing the link clickable */
+a.param-doc-link::before {
+    position: absolute;
+    content: "";
+    inset: 0;
+}
+
+.param-doc-description {
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    left: 0;
+    padding: .5ex;
+    margin-left: 1.5em;
+    color: var(--sklearn-color-text);
+    box-shadow: .3em .3em .4em #999;
+    width: max-content;
+    text-align: left;
+    max-height: 10em;
+    overflow-y: auto;
+
+    /* unfitted */
+    background: var(--sklearn-color-unfitted-level-0);
+    border: thin solid var(--sklearn-color-unfitted-level-3);
+}
+
+/* Fitted state for parameter tooltips */
+.fitted .param-doc-description {
+    /* fitted */
+    background: var(--sklearn-color-fitted-level-0);
+    border: thin solid var(--sklearn-color-fitted-level-3);
+}
+
+.param-doc-link:hover .param-doc-description {
+    display: block;
+}
+
+.copy-paste-icon {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48IS0tIUZvbnQgQXdlc29tZSBGcmVlIDYuNy4yIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlL2ZyZWUgQ29weXJpZ2h0IDIwMjUgRm9udGljb25zLCBJbmMuLS0+PHBhdGggZD0iTTIwOCAwTDMzMi4xIDBjMTIuNyAwIDI0LjkgNS4xIDMzLjkgMTQuMWw2Ny45IDY3LjljOSA5IDE0LjEgMjEuMiAxNC4xIDMzLjlMNDQ4IDMzNmMwIDI2LjUtMjEuNSA0OC00OCA0OGwtMTkyIDBjLTI2LjUgMC00OC0yMS41LTQ4LTQ4bDAtMjg4YzAtMjYuNSAyMS41LTQ4IDQ4LTQ4ek00OCAxMjhsODAgMCAwIDY0LTY0IDAgMCAyNTYgMTkyIDAgMC0zMiA2NCAwIDAgNDhjMCAyNi41LTIxLjUgNDgtNDggNDhMNDggNTEyYy0yNi41IDAtNDgtMjEuNS00OC00OEwwIDE3NmMwLTI2LjUgMjEuNS00OCA0OC00OHoiLz48L3N2Zz4=);
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+    background-position: 0;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>RidgeCV(alphas=array([1.00000000e-02, 1.38949549e-02, 1.93069773e-02, 2.68269580e-02,
+       3.72759372e-02, 5.17947468e-02, 7.19685673e-02, 1.00000000e-01,
+       1.38949549e-01, 1.93069773e-01, 2.68269580e-01, 3.72759372e-01,
+       5.17947468e-01, 7.19685673e-01, 1.00000000e+00, 1.38949549e+00,
+       1.93069773e+00, 2.68269580e+00, 3.72759372e+00, 5.17947468e+00,
+       7.19685673e+00, 1.00000000e+0...
+       2.68269580e+01, 3.72759372e+01, 5.17947468e+01, 7.19685673e+01,
+       1.00000000e+02, 1.38949549e+02, 1.93069773e+02, 2.68269580e+02,
+       3.72759372e+02, 5.17947468e+02, 7.19685673e+02, 1.00000000e+03,
+       1.38949549e+03, 1.93069773e+03, 2.68269580e+03, 3.72759372e+03,
+       5.17947468e+03, 7.19685673e+03, 1.00000000e+04, 1.38949549e+04,
+       1.93069773e+04, 2.68269580e+04, 3.72759372e+04, 5.17947468e+04,
+       7.19685673e+04, 1.00000000e+05]),
+        cv=5)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked=""><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>RidgeCV</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html">?<span>Documentation for RidgeCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted" data-param-prefix="">
+        <div class="estimator-table">
+            <details>
+                <summary>Parameters</summary>
+                
+<table class="parameters-table caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<tbody>
+<tr class="odd user-set">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=alphas,-array-like%20of%20shape%20%28n_alphas%2C%29%2C%20default%3D%280.1%2C%201.0%2C%2010.0%29" class="param-doc-link" rel="noreferrer" target="_blank">alphas <span class="param-doc-description">alphas: array-like of shape (n_alphas,), default=(0.1, 1.0, 10.0)<br>
+<br>
+Array of alpha values to try.<br>
+Regularization strength; must be a positive float. Regularization<br>
+improves the conditioning of the problem and reduces the variance of<br>
+the estimates. Larger values specify stronger regularization.<br>
+Alpha corresponds to ``1 / (2C)`` in other linear models such as<br>
+:class:`~sklearn.linear_model.LogisticRegression` or<br>
+:class:`~sklearn.svm.LinearSVC`.<br>
+If using Leave-One-Out cross-validation, alphas must be strictly positive.</span></a></td>
+<td class="value">array([1.0000...00000000e+05])</td>
+</tr>
+<tr class="even default">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=fit_intercept,-bool%2C%20default%3DTrue" class="param-doc-link" rel="noreferrer" target="_blank">fit_intercept <span class="param-doc-description">fit_intercept: bool, default=True<br>
+<br>
+Whether to calculate the intercept for this model. If set<br>
+to false, no intercept will be used in calculations<br>
+(i.e. data is expected to be centered).</span></a></td>
+<td class="value">True</td>
+</tr>
+<tr class="odd default">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=scoring,-str%2C%20callable%2C%20default%3DNone" class="param-doc-link" rel="noreferrer" target="_blank">scoring <span class="param-doc-description">scoring: str, callable, default=None<br>
+<br>
+The scoring method to use for cross-validation. Options:<br>
+<br>
+- str: see :ref:`scoring_string_names` for options.<br>
+- callable: a scorer callable object (e.g., function) with signature<br>
+``scorer(estimator, X, y)``. See :ref:`scoring_callable` for details.<br>
+- `None`: negative :ref:`mean squared error <mean_squared_error>` if cv is<br>
+None (i.e. when using leave-one-out cross-validation), or<br>
+:ref:`coefficient of determination <r2_score>` (:math:`R^2`) otherwise.</r2_score></mean_squared_error></span></a></td>
+<td class="value">None</td>
+</tr>
+<tr class="even user-set">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=cv,-int%2C%20cross-validation%20generator%20or%20an%20iterable%2C%20default%3DNone" class="param-doc-link" rel="noreferrer" target="_blank">cv <span class="param-doc-description">cv: int, cross-validation generator or an iterable, default=None<br>
+<br>
+Determines the cross-validation splitting strategy.<br>
+Possible inputs for cv are:<br>
+<br>
+- None, to use the efficient Leave-One-Out cross-validation<br>
+- integer, to specify the number of folds.<br>
+- :term:`CV splitter`,<br>
+- An iterable yielding (train, test) splits as arrays of indices.<br>
+<br>
+For integer/None inputs, if ``y`` is binary or multiclass,<br>
+:class:`~sklearn.model_selection.StratifiedKFold` is used, else,<br>
+:class:`~sklearn.model_selection.KFold` is used.<br>
+<br>
+Refer :ref:`User Guide <cross_validation>` for the various<br>
+cross-validation strategies that can be used here.</cross_validation></span></a></td>
+<td class="value">5</td>
+</tr>
+<tr class="odd default">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=gcv_mode,-%7B%27auto%27%2C%20%27svd%27%2C%20%27eigen%27%7D%2C%20default%3D%27auto%27" class="param-doc-link" rel="noreferrer" target="_blank">gcv_mode <span class="param-doc-description">gcv_mode: {'auto', 'svd', 'eigen'}, default='auto'<br>
+<br>
+Flag indicating which strategy to use when performing<br>
+Leave-One-Out Cross-Validation. Options are::<br>
+<br>
+'auto' : use 'svd' if n_samples &gt; n_features, otherwise use 'eigen'<br>
+'svd' : force use of singular value decomposition of X when X is<br>
+dense, eigenvalue decomposition of X^T.X when X is sparse.<br>
+'eigen' : force computation via eigendecomposition of X.X^T<br>
+<br>
+The 'auto' mode is the default and is intended to pick the cheaper<br>
+option of the two depending on the shape of the training data.</span></a></td>
+<td class="value">None</td>
+</tr>
+<tr class="even default">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=store_cv_results,-bool%2C%20default%3DFalse" class="param-doc-link" rel="noreferrer" target="_blank">store_cv_results <span class="param-doc-description">store_cv_results: bool, default=False<br>
+<br>
+Flag indicating if the cross-validation values corresponding to<br>
+each alpha should be stored in the ``cv_results_`` attribute (see<br>
+below). This flag is only compatible with ``cv=None`` (i.e. using<br>
+Leave-One-Out Cross-Validation).<br>
+<br>
+.. versionchanged:: 1.5<br>
+Parameter name changed from `store_cv_values` to `store_cv_results`.</span></a></td>
+<td class="value">False</td>
+</tr>
+<tr class="odd default">
+<td><em></em></td>
+<td class="param"><a href="https://scikit-learn.org/1.8/modules/generated/sklearn.linear_model.RidgeCV.html#:~:text=alpha_per_target,-bool%2C%20default%3DFalse" class="param-doc-link" rel="noreferrer" target="_blank">alpha_per_target <span class="param-doc-description">alpha_per_target: bool, default=False<br>
+<br>
+Flag indicating whether to optimize the alpha value (picked from the<br>
+`alphas` parameter list) for each target separately (for multi-output<br>
+settings: multiple prediction targets). When set to `True`, after<br>
+fitting, the `alpha_` attribute will contain a value for each target.<br>
+When set to `False`, a single alpha is used for all targets.<br>
+<br>
+.. versionadded:: 0.24</span></a></td>
+<td class="value">False</td>
+</tr>
+</tbody>
+</table>
+
+            </details>
+        </div>
+    </div></div></div></div></div><script>function copyToClipboard(text, element) {
+    // Get the parameter prefix from the closest toggleable content
+    const toggleableContent = element.closest('.sk-toggleable__content');
+    const paramPrefix = toggleableContent ? toggleableContent.dataset.paramPrefix : '';
+    const fullParamName = paramPrefix ? `${paramPrefix}${text}` : text;
+
+    const originalStyle = element.style;
+    const computedStyle = window.getComputedStyle(element);
+    const originalWidth = computedStyle.width;
+    const originalHTML = element.innerHTML.replace('Copied!', '');
+
+    navigator.clipboard.writeText(fullParamName)
+        .then(() => {
+            element.style.width = originalWidth;
+            element.style.color = 'green';
+            element.innerHTML = "Copied!";
+
+            setTimeout(() => {
+                element.innerHTML = originalHTML;
+                element.style = originalStyle;
+            }, 2000);
+        })
+        .catch(err => {
+            console.error('Failed to copy:', err);
+            element.style.color = 'red';
+            element.innerHTML = "Failed!";
+            setTimeout(() => {
+                element.innerHTML = originalHTML;
+                element.style = originalStyle;
+            }, 2000);
+        });
+    return false;
+}
+
+document.querySelectorAll('.copy-paste-icon').forEach(function(element) {
+    const toggleableContent = element.closest('.sk-toggleable__content');
+    const paramPrefix = toggleableContent ? toggleableContent.dataset.paramPrefix : '';
+    const paramName = element.parentElement.nextElementSibling
+        .textContent.trim().split(' ')[0];
+    const fullParamName = paramPrefix ? `${paramPrefix}${paramName}` : paramName;
+
+    element.setAttribute('title', fullParamName);
+});
+
+
+/**
+ * Adapted from Skrub
+ * https://github.com/skrub-data/skrub/blob/403466d1d5d4dc76a7ef569b3f8228db59a31dc3/skrub/_reporting/_data/templates/report.js#L789
+ * @returns "light" or "dark"
+ */
+function detectTheme(element) {
+    const body = document.querySelector('body');
+
+    // Check VSCode theme
+    const themeKindAttr = body.getAttribute('data-vscode-theme-kind');
+    const themeNameAttr = body.getAttribute('data-vscode-theme-name');
+
+    if (themeKindAttr && themeNameAttr) {
+        const themeKind = themeKindAttr.toLowerCase();
+        const themeName = themeNameAttr.toLowerCase();
+
+        if (themeKind.includes("dark") || themeName.includes("dark")) {
+            return "dark";
+        }
+        if (themeKind.includes("light") || themeName.includes("light")) {
+            return "light";
+        }
+    }
+
+    // Check Jupyter theme
+    if (body.getAttribute('data-jp-theme-light') === 'false') {
+        return 'dark';
+    } else if (body.getAttribute('data-jp-theme-light') === 'true') {
+        return 'light';
+    }
+
+    // Guess based on a parent element's color
+    const color = window.getComputedStyle(element.parentNode, null).getPropertyValue('color');
+    const match = color.match(/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i);
+    if (match) {
+        const [r, g, b] = [
+            parseFloat(match[1]),
+            parseFloat(match[2]),
+            parseFloat(match[3])
+        ];
+
+        // https://en.wikipedia.org/wiki/HSL_and_HSV#Lightness
+        const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        if (luma > 180) {
+            // If the text is very bright we have a dark theme
+            return 'dark';
+        }
+        if (luma < 75) {
+            // If the text is very dark we have a light theme
+            return 'light';
+        }
+        // Otherwise fall back to the next heuristic.
+    }
+
+    // Fallback to system preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+
+function forceTheme(elementId) {
+    const estimatorElement = document.querySelector(`#${elementId}`);
+    if (estimatorElement === null) {
+        console.error(`Element with id ${elementId} not found.`);
+    } else {
+        const theme = detectTheme(estimatorElement);
+        estimatorElement.classList.add(theme);
+    }
+}
+
+forceTheme('sk-container-id-2');</script>
+</div>
+</div>
+</section>
+<section id="optimal-value-of-alpha" class="level5">
+<h5 class="anchored" data-anchor-id="optimal-value-of-alpha">Optimal Value of Alpha</h5>
+<div id="6b00328d" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Optimal Value of alpha: </span><span class="sc">{</span>m2<span class="sc">.</span>alpha_<span class="sc">.</span><span class="bu">round</span>(<span class="dv">2</span>)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimal Value of alpha: 719.69</code></pre>
+</div>
+</div>
+</section>
+<section id="model-2-player-top-20-lineup" class="level5">
+<h5 class="anchored" data-anchor-id="model-2-player-top-20-lineup">Model 2 Player Top 20 Lineup</h5>
+<div id="9824547a" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#--pulling the ridge values--</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>rapm2<span class="op">=</span><span class="bu">dict</span>(<span class="bu">zip</span>(players[<span class="st">"player_id"</span>].astype(<span class="bu">int</span>), m2.coef_))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"rapm2"</span>]<span class="op">=</span> players[<span class="st">"player_id"</span>].<span class="bu">map</span>(rapm2)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> players.sort_values(<span class="st">"rapm2"</span>, ascending<span class="op">=</span> <span class="va">False</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span>pd.DataFrame(players.head(<span class="dv">20</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span> top20.copy()</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#-- adding the ids to the base url--</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>top20[<span class="st">"image_url"</span>]<span class="op">=</span> top20[<span class="st">"player_id"</span>].astype(<span class="bu">str</span>).<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"https://cdn.nba.com/headshots/nba/latest/1040x760/</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">.png"</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>header<span class="op">=</span> <span class="st">"&lt;h1 style='text-align:center;'&gt;Model 2: Top 20 by RAPM&lt;/h1&gt;"</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>p_cards <span class="op">=</span> <span class="st">""</span>.join(</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style='text-align:center;'&gt;"</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;img src='</span><span class="sc">{</span>row<span class="sc">.</span>image_url<span class="sc">}</span><span class="ss">' style='width:90px;'&gt;"</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:13px;'&gt;</span><span class="sc">{</span>row<span class="sc">.</span>player_name<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;RAPM: </span><span class="sc">{</span>row<span class="sc">.</span>rapm<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;Play Time: </span><span class="sc">{</span>row<span class="sc">.</span>t_minutes<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;/div&gt;"</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> player, row <span class="kw">in</span> top20.iterrows())</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>HTML(<span class="ss">f"&lt;div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'&gt;</span><span class="sc">{</span>p_cards<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<div style="display:grid;grid-template-columns:repeat(5,1fr); gap:8px;"><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629643.png" style="width:90px;"><div style="font-size:13px;">Chuma Okeke</div><div style="font-size:12px;">RAPM: 20.186</div><div style="font-size:12px;">Play Time: 513</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203991.png" style="width:90px;"><div style="font-size:13px;">Clint Capela</div><div style="font-size:12px;">RAPM: 17.488</div><div style="font-size:12px;">Play Time: 1696</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629629.png" style="width:90px;"><div style="font-size:13px;">Cam Reddish</div><div style="font-size:12px;">RAPM: 25.959</div><div style="font-size:12px;">Play Time: 957</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628966.png" style="width:90px;"><div style="font-size:13px;">Keita Bates-Diop</div><div style="font-size:12px;">RAPM: 22.533</div><div style="font-size:12px;">Play Time: 1318</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630178.png" style="width:90px;"><div style="font-size:13px;">Tyrese Maxey</div><div style="font-size:12px;">RAPM: 15.730</div><div style="font-size:12px;">Play Time: 2000</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629012.png" style="width:90px;"><div style="font-size:13px;">Collin Sexton</div><div style="font-size:12px;">RAPM: 18.557</div><div style="font-size:12px;">Play Time: 1192</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203897.png" style="width:90px;"><div style="font-size:13px;">Zach LaVine</div><div style="font-size:12px;">RAPM: 50.272</div><div style="font-size:12px;">Play Time: 2783</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201572.png" style="width:90px;"><div style="font-size:13px;">Brook Lopez</div><div style="font-size:12px;">RAPM: 17.932</div><div style="font-size:12px;">Play Time: 2156</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201588.png" style="width:90px;"><div style="font-size:13px;">George Hill</div><div style="font-size:12px;">RAPM: 12.324</div><div style="font-size:12px;">Play Time: 892</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630224.png" style="width:90px;"><div style="font-size:13px;">Jalen Green</div><div style="font-size:12px;">RAPM: 19.790</div><div style="font-size:12px;">Play Time: 2575</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/201567.png" style="width:90px;"><div style="font-size:13px;">Kevin Love</div><div style="font-size:12px;">RAPM: 17.168</div><div style="font-size:12px;">Play Time: 1131</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629060.png" style="width:90px;"><div style="font-size:13px;">Rui Hachimura</div><div style="font-size:12px;">RAPM: 16.168</div><div style="font-size:12px;">Play Time: 1504</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/2738.png" style="width:90px;"><div style="font-size:13px;">Andre Iguodala</div><div style="font-size:12px;">RAPM: 33.030</div><div style="font-size:12px;">Play Time: 116</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629111.png" style="width:90px;"><div style="font-size:13px;">Jock Landale</div><div style="font-size:12px;">RAPM: 12.645</div><div style="font-size:12px;">Play Time: 921</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630288.png" style="width:90px;"><div style="font-size:13px;">Jeff Dowtin Jr.</div><div style="font-size:12px;">RAPM: 18.560</div><div style="font-size:12px;">Play Time: 238</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630233.png" style="width:90px;"><div style="font-size:13px;">Nathan Knight</div><div style="font-size:12px;">RAPM: 12.343</div><div style="font-size:12px;">Play Time: 312</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630551.png" style="width:90px;"><div style="font-size:13px;">Justin Champagnie</div><div style="font-size:12px;">RAPM: 15.293</div><div style="font-size:12px;">Play Time: 22</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630201.png" style="width:90px;"><div style="font-size:13px;">Malachi Flynn</div><div style="font-size:12px;">RAPM: 17.779</div><div style="font-size:12px;">Play Time: 658</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628370.png" style="width:90px;"><div style="font-size:13px;">Malik Monk</div><div style="font-size:12px;">RAPM: 17.434</div><div style="font-size:12px;">Play Time: 1678</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628384.png" style="width:90px;"><div style="font-size:13px;">OG Anunoby</div><div style="font-size:12px;">RAPM: 18.141</div><div style="font-size:12px;">Play Time: 2287</div></div></div>
+</div>
+</div>
 </section>
 </section>
 <section id="problem-2-possession-weights" class="level2">
 <h2 class="anchored" data-anchor-id="problem-2-possession-weights">Problem 2: Possession Weights</h2>
 <section id="heteroscedasticity-in-stints" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="heteroscedasticity-in-stints"><strong>Heteroscedasticity in Stints:</strong></h4>
-<p>Make a plot of the ‘margin’ variable as a function of the number of possessions in a stint. What do you notice about the variance of ‘margin’? Why do you think it is happening?</p>
+<p>Make a plot of the <code>margin</code> variable as a function of the number of possessions in a stint. What do you notice about the variance of <code>margin</code>? Why do you think it is happening?</p>
 </section>
+<p>The plot below is a funnel shape, it goes from wide variance to low variance. It seems symmetrical if sliced at zero. It is an example pf heteroscedasticity as the variance is not constant but seems to have a pattern.</p>
+<div id="668ba9dd" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>stints, x<span class="op">=</span><span class="st">"n_pos"</span>, y<span class="op">=</span><span class="st">"margin"</span>, alpha<span class="op">=</span> <span class="fl">0.3</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Number of Posessions vs Player Margin in a Stint"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 <section id="implementing-weights-regression" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="implementing-weights-regression"><strong>Implementing Weights Regression:</strong></h4>
-<p>The solution to the issue that you observed in 2(a) is something called weighted least squares This involves adjusting the error term for each stint based on a weight that accounts for whatever factor controls the variance. The new weighted model looks like this:</p>
+<p>The solution to the issue that you observed in 2(a) is something called <strong>weighted least squares</strong> This involves adjusting the error term for each stint, based on a weight that accounts for whatever factor controls the variance.</p>
+<p>The new weighted model looks like this:</p>
 <p><span class="math display">\[
 \mathrm{margin}_i \sim \mathrm{Normal}\left(\sum_{j} c_{ij}\left(\mathrm{RAPM}\right)_j, \frac{\sigma^2}{w_i} \right)
 \]</span></p>
-<p>where <span class="math inline">\(w_i\)</span> is a coefficient that determines how the variance of ‘margin’ should scale for each stint. The idea is that $w_i$ should be smaller for stints where the variance is high, and larger for stints where the variance is low. This forces the model to fit the low-variance stints more closely than the high-variance stints. The correct weights for this problem are the <span class="math inline">\(w_i = \mathrm{num\_pos}_i\)</span>, which implies that the variance of the margin is inversely proportional to the number of stints.<br>
-Verify this by making a scatter plot of the margin rate times the square root of the number of possessions versus the number of possessions. Then recalculate the player ‘RAPM’ coefficients from 1(c) by setting the ‘weights’ keyword in the model fit to be ‘n_pos’.<br>
-<br>
-How have the rankings of top players changed?</p>
+<p>where <span class="math inline">\(w_i\)</span> is a coefficient that determines how the variance of <code>margin</code> should scale for each stint. The idea is that <span class="math inline">\(w_i\)</span> should be smaller for stints where the variance is high, and larger for stints where the variance is low. This forces the model to fit the low-variance stints more closely than the high-variance stints. The correct weights for this problem are the <span class="math inline">\(w_i = \mathrm{num\_pos}_i\)</span>, which implies that the variance of the margin is inversely proportional to the number of stints.<br>
+</p>
+<p>Verify this by making a scatter plot of the margin rate times the square root of the number of possessions versus the number of possessions.</p>
+<p>Then recalculate the player <code>RAPM</code> coefficients from 1(c) by setting the <code>weights</code> keyword in the model fit to be <code>n_pos</code>. How have the rankings of top players changed?</p>
+</section>
+<section id="scatterplot-for-scaled-margin" class="level5">
+<h5 class="anchored" data-anchor-id="scatterplot-for-scaled-margin">Scatterplot for Scaled Margin</h5>
+<div id="280e83bd" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>stints[<span class="st">"correction"</span>]<span class="op">=</span> stints[<span class="st">"margin"</span>] <span class="op">*</span> np.sqrt(stints[<span class="st">"n_pos"</span>])</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>stints, x<span class="op">=</span><span class="st">"n_pos"</span>, y<span class="op">=</span><span class="st">"correction"</span>, alpha<span class="op">=</span> <span class="fl">0.3</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Number of Posessions vs Player Margin (scaled) in a Stint"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Margin Rate x sqrt(Number of Posessions)"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="rapm-recalculation" class="level5">
+<h5 class="anchored" data-anchor-id="rapm-recalculation">RAPM Recalculation</h5>
+<div id="b20c4703" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-- weights keyword--</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>m3<span class="op">=</span> RidgeCV(alphas<span class="op">=</span>alpha, fit_intercept<span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>m3.fit(x,y, sample_weight<span class="op">=</span> stints[<span class="st">"n_pos"</span>])</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#--pulling the ridge values--</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>rapm3<span class="op">=</span><span class="bu">dict</span>(<span class="bu">zip</span>(players[<span class="st">"player_id"</span>].astype(<span class="bu">int</span>), m3.coef_))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"rapm3"</span>]<span class="op">=</span> players[<span class="st">"player_id"</span>].<span class="bu">map</span>(rapm3)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> players.sort_values(<span class="st">"rapm3"</span>, ascending<span class="op">=</span> <span class="va">False</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span>pd.DataFrame(players.head(<span class="dv">20</span>))</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span> top20.copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-3-player-top-20-lineup" class="level5">
+<h5 class="anchored" data-anchor-id="model-3-player-top-20-lineup">Model 3 Player Top 20 Lineup</h5>
+<div id="ea827de7" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-- adding the ids to the base url p3--</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>top20[<span class="st">"image_url"</span>]<span class="op">=</span> top20[<span class="st">"player_id"</span>].astype(<span class="bu">str</span>).<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"https://cdn.nba.com/headshots/nba/latest/1040x760/</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">.png"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>header<span class="op">=</span> <span class="st">"&lt;h1 style='text-align:center;'&gt;Model 3: Top 20 by RAPM&lt;/h1&gt;"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>p_cards <span class="op">=</span> <span class="st">""</span>.join(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style='text-align:center;'&gt;"</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;img src='</span><span class="sc">{</span>row<span class="sc">.</span>image_url<span class="sc">}</span><span class="ss">' style='width:90px;'&gt;"</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:13px;'&gt;</span><span class="sc">{</span>row<span class="sc">.</span>player_name<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;RAPM: </span><span class="sc">{</span>row<span class="sc">.</span>rapm<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;Play Time: </span><span class="sc">{</span>row<span class="sc">.</span>t_minutes<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;/div&gt;"</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> player, row <span class="kw">in</span> top20.iterrows())</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>HTML(<span class="ss">f"&lt;div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'&gt;</span><span class="sc">{</span>p_cards<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<div style="display:grid;grid-template-columns:repeat(5,1fr); gap:8px;"><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627936.png" style="width:90px;"><div style="font-size:13px;">Alex Caruso</div><div style="font-size:12px;">RAPM: 16.580</div><div style="font-size:12px;">Play Time: 1615</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629629.png" style="width:90px;"><div style="font-size:13px;">Cam Reddish</div><div style="font-size:12px;">RAPM: 25.959</div><div style="font-size:12px;">Play Time: 957</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627827.png" style="width:90px;"><div style="font-size:13px;">Dorian Finney-Smith</div><div style="font-size:12px;">RAPM: 15.531</div><div style="font-size:12px;">Play Time: 1930</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631205.png" style="width:90px;"><div style="font-size:13px;">Buddy Boeheim</div><div style="font-size:12px;">RAPM: 16.712</div><div style="font-size:12px;">Play Time: 82</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629674.png" style="width:90px;"><div style="font-size:13px;">Neemias Queta</div><div style="font-size:12px;">RAPM: 6.748</div><div style="font-size:12px;">Play Time: 31</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629684.png" style="width:90px;"><div style="font-size:13px;">Grant Williams</div><div style="font-size:12px;">RAPM: 24.754</div><div style="font-size:12px;">Play Time: 2123</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630205.png" style="width:90px;"><div style="font-size:13px;">Lamar Stevens</div><div style="font-size:12px;">RAPM: 14.419</div><div style="font-size:12px;">Play Time: 1078</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630227.png" style="width:90px;"><div style="font-size:13px;">Daishen Nix</div><div style="font-size:12px;">RAPM: 18.857</div><div style="font-size:12px;">Play Time: 871</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630169.png" style="width:90px;"><div style="font-size:13px;">Tyrese Haliburton</div><div style="font-size:12px;">RAPM: 4.981</div><div style="font-size:12px;">Play Time: 1849</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629026.png" style="width:90px;"><div style="font-size:13px;">Kenrich Williams</div><div style="font-size:12px;">RAPM: 5.401</div><div style="font-size:12px;">Play Time: 1176</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629661.png" style="width:90px;"><div style="font-size:13px;">Cameron Johnson</div><div style="font-size:12px;">RAPM: 24.515</div><div style="font-size:12px;">Play Time: 1073</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630551.png" style="width:90px;"><div style="font-size:13px;">Justin Champagnie</div><div style="font-size:12px;">RAPM: 15.293</div><div style="font-size:12px;">Play Time: 22</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630168.png" style="width:90px;"><div style="font-size:13px;">Onyeka Okongwu</div><div style="font-size:12px;">RAPM: 9.940</div><div style="font-size:12px;">Play Time: 1726</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630182.png" style="width:90px;"><div style="font-size:13px;">Josh Green</div><div style="font-size:12px;">RAPM: 15.252</div><div style="font-size:12px;">Play Time: 1454</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630233.png" style="width:90px;"><div style="font-size:13px;">Nathan Knight</div><div style="font-size:12px;">RAPM: 12.343</div><div style="font-size:12px;">Play Time: 312</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628972.png" style="width:90px;"><div style="font-size:13px;">Troy Brown Jr.</div><div style="font-size:12px;">RAPM: 10.521</div><div style="font-size:12px;">Play Time: 1869</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630532.png" style="width:90px;"><div style="font-size:13px;">Franz Wagner</div><div style="font-size:12px;">RAPM: -0.840</div><div style="font-size:12px;">Play Time: 2293</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630554.png" style="width:90px;"><div style="font-size:13px;">Jason Preston</div><div style="font-size:12px;">RAPM: 12.996</div><div style="font-size:12px;">Play Time: 115</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629675.png" style="width:90px;"><div style="font-size:13px;">Naz Reid</div><div style="font-size:12px;">RAPM: 14.826</div><div style="font-size:12px;">Play Time: 1265</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631288.png" style="width:90px;"><div style="font-size:13px;">Jamal Cain</div><div style="font-size:12px;">RAPM: 17.779</div><div style="font-size:12px;">Play Time: 263</div></div></div>
+</div>
+</div>
 </section>
 </section>
 <section id="problem-3-interpreting-bootstrap-uncertainty" class="level2">
 <h2 class="anchored" data-anchor-id="problem-3-interpreting-bootstrap-uncertainty">Problem 3: Interpreting Bootstrap Uncertainty</h2>
 <section id="calculate-confidence-intervals-using-the-bootstrap" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="calculate-confidence-intervals-using-the-bootstrap">Calculate Confidence Intervals Using the Bootstrap:</h4>
-<p>Suppose you are a general manager for a basketball team. You want to identify candidate players to add to your team, but you are unsure how certain to be about the ‘RAPM’ coefficients for the model. The bootstrap is a standard approach for calculating confidence intervals for model coefficients. Use either the ‘resample’ function from ‘sklearn’ or ‘np.random.choice’ along with a loop to calculate bootstrap samples of the model coefficients for each player. You may use the optimal ‘alpha’ found during the hyperparameter search in 2(b) for all bootstrap fits. Do not forget to resample the weights when bootstrapping!. For the top 20 players, display the RAPM estimates along with the confidence interval (calculate 92% intervals or some other high value that isn’t 95%). How much do the intervals of the top 20 overlap?</p>
+<p>Suppose you are a general manager for a basketball team. You want to identify candidate players to add to your team, but you are unsure how certain to be about the ‘RAPM’ coefficients for the model. The bootstrap is a standard approach for calculating confidence intervals for model coefficients.</p>
+<p>Use either the <code>resample</code> function from <code>sklearn</code> or <code>np.random.choice</code> along with a loop to calculate bootstrap samples of the model coefficients for each player. You may use the optimal <code>alpha</code> found during the hyperparameter search in 2(b) for all bootstrap fits.</p>
+<p><strong>Do not forget to resample the weights when bootstrapping!</strong></p>
+<p>For the top 20 players, display the RAPM estimates along with the confidence interval (calculate 92% intervals or some other high value that isn’t 95%). How much do the intervals of the top 20 overlap?</p>
+</section>
+<section id="boot-loop" class="level5">
+<h5 class="anchored" data-anchor-id="boot-loop">Boot Loop</h5>
+<div id="9d4f6385" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#--calculating bootstrap samples--</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>boot<span class="op">=</span>[]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">400</span>):</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  sampled<span class="op">=</span> np.random.choice(<span class="bu">len</span>(y), size<span class="op">=</span><span class="bu">len</span>(y), replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  x_a<span class="op">=</span> x.iloc[sampled]</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  y_a<span class="op">=</span> y.iloc[sampled]</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  z_b<span class="op">=</span> stints[<span class="st">"n_pos"</span>].values[sampled]</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  m4<span class="op">=</span> Ridge(alpha<span class="op">=</span> m2.alpha_, fit_intercept<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  m4.fit(x_a, y_a, sample_weight<span class="op">=</span> z_b)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  boot.append(m4.coef_)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>boot<span class="op">=</span> np.array(boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="player-ci-upper-and-lower-at-92" class="level5">
+<h5 class="anchored" data-anchor-id="player-ci-upper-and-lower-at-92">Player CI: Upper and Lower at 92%</h5>
+<div id="842cecab" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#--matching the Player IDs--</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>rapm4<span class="op">=</span><span class="bu">dict</span>(<span class="bu">zip</span>(players[<span class="st">"player_id"</span>].astype(<span class="bu">int</span>), m4.coef_))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>cil_map<span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(players[<span class="st">"player_id"</span>].astype(<span class="bu">int</span>), np.percentile(boot, <span class="dv">4</span>, axis<span class="op">=</span><span class="dv">0</span>)))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>ciu_map<span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(players[<span class="st">"player_id"</span>].astype(<span class="bu">int</span>), np.percentile(boot, <span class="dv">96</span>, axis<span class="op">=</span><span class="dv">0</span>)))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#-- Adding the Cis</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> players.copy()</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"rapm4"</span>]<span class="op">=</span> players[<span class="st">"player_id"</span>].<span class="bu">map</span>(rapm4)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"ci_lower"</span>]<span class="op">=</span> players[<span class="st">"player_id"</span>].<span class="bu">map</span>(cil_map)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"ci_upper"</span>]<span class="op">=</span> players[<span class="st">"player_id"</span>].<span class="bu">map</span>(ciu_map)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>players<span class="op">=</span> players.sort_values(<span class="st">"rapm4"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>top20<span class="op">=</span> players.head(<span class="dv">20</span>).copy()</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>top20[<span class="st">"ci_range"</span>]<span class="op">=</span> top20[<span class="st">"ci_upper"</span>]<span class="op">-</span>top20[<span class="st">"ci_lower"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-4-player-top-20-lineup" class="level5">
+<h5 class="anchored" data-anchor-id="model-4-player-top-20-lineup">Model 4 Player Top 20 Lineup</h5>
+<div id="cdf3bfad" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#-- adding the ids to the base url p3--</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>top20[<span class="st">"image_url"</span>]<span class="op">=</span> top20[<span class="st">"player_id"</span>].astype(<span class="bu">str</span>).<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"https://cdn.nba.com/headshots/nba/latest/1040x760/</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">.png"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>header<span class="op">=</span> <span class="st">"&lt;h1 style='text-align:center;'&gt;Model 4: Top 20 by RAPM (after Bootstrapping)&lt;/h1&gt;"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>p_cards <span class="op">=</span> <span class="st">""</span>.join(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style='text-align:center;'&gt;"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;img src='</span><span class="sc">{</span>row<span class="sc">.</span>image_url<span class="sc">}</span><span class="ss">' style='width:90px;'&gt;"</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:14px; font-weight: bold'&gt;</span><span class="sc">{</span>row<span class="sc">.</span>player_name<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;RAPM: </span><span class="sc">{</span>row<span class="sc">.</span>rapm<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;CI Lower: </span><span class="sc">{</span>row<span class="sc">.</span>ci_lower<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:12px;'&gt;CI Upper: </span><span class="sc">{</span>row<span class="sc">.</span>ci_upper<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;div style= 'font-size:14px; font-weight: bold'&gt;CI Range:</span><span class="sc">{</span>row<span class="sc">.</span>ci_range<span class="sc">:.3f}</span><span class="ss">&lt;/div&gt;"</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"&lt;/div&gt;"</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> player, row <span class="kw">in</span> top20.iterrows())</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>HTML(<span class="ss">f"&lt;div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'&gt;</span><span class="sc">{</span>p_cards<span class="sc">}</span><span class="ss">&lt;/div&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<div style="display:grid;grid-template-columns:repeat(5,1fr); gap:8px;"><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630543.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Isaiah Jackson</div><div style="font-size:12px;">RAPM: 21.908</div><div style="font-size:12px;">CI Lower: 3.736</div><div style="font-size:12px;">CI Upper: 9.120</div><div style="font-size:14px; font-weight: bold">CI Range:5.384</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629735.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Chris Silva</div><div style="font-size:12px;">RAPM: 41.990</div><div style="font-size:12px;">CI Lower: 1.077</div><div style="font-size:12px;">CI Upper: 7.256</div><div style="font-size:14px; font-weight: bold">CI Range:6.179</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627732.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Ben Simmons</div><div style="font-size:12px;">RAPM: 13.133</div><div style="font-size:12px;">CI Lower: 0.845</div><div style="font-size:12px;">CI Upper: 7.430</div><div style="font-size:14px; font-weight: bold">CI Range:6.584</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203487.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Michael Carter-Williams</div><div style="font-size:12px;">RAPM: 17.582</div><div style="font-size:12px;">CI Lower: 0.268</div><div style="font-size:12px;">CI Upper: 8.393</div><div style="font-size:14px; font-weight: bold">CI Range:8.125</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630792.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Malcolm Hill</div><div style="font-size:12px;">RAPM: 16.046</div><div style="font-size:12px;">CI Lower: -0.797</div><div style="font-size:12px;">CI Upper: 5.636</div><div style="font-size:14px; font-weight: bold">CI Range:6.432</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627827.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Dorian Finney-Smith</div><div style="font-size:12px;">RAPM: 15.531</div><div style="font-size:12px;">CI Lower: 3.033</div><div style="font-size:12px;">CI Upper: 9.042</div><div style="font-size:14px; font-weight: bold">CI Range:6.008</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203083.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Andre Drummond</div><div style="font-size:12px;">RAPM: 14.316</div><div style="font-size:12px;">CI Lower: 0.364</div><div style="font-size:12px;">CI Upper: 6.540</div><div style="font-size:14px; font-weight: bold">CI Range:6.176</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631219.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">John Butler Jr.</div><div style="font-size:12px;">RAPM: 14.713</div><div style="font-size:12px;">CI Lower: 2.246</div><div style="font-size:12px;">CI Upper: 9.341</div><div style="font-size:14px; font-weight: bold">CI Range:7.095</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630288.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Jeff Dowtin Jr.</div><div style="font-size:12px;">RAPM: 18.560</div><div style="font-size:12px;">CI Lower: 0.248</div><div style="font-size:12px;">CI Upper: 5.974</div><div style="font-size:14px; font-weight: bold">CI Range:5.726</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628467.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Maxi Kleber</div><div style="font-size:12px;">RAPM: 19.690</div><div style="font-size:12px;">CI Lower: -0.026</div><div style="font-size:12px;">CI Upper: 5.108</div><div style="font-size:14px; font-weight: bold">CI Range:5.135</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/203457.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Nerlens Noel</div><div style="font-size:12px;">RAPM: 17.478</div><div style="font-size:12px;">CI Lower: 4.144</div><div style="font-size:12px;">CI Upper: 10.484</div><div style="font-size:14px; font-weight: bold">CI Range:6.339</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1626196.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Josh Richardson</div><div style="font-size:12px;">RAPM: 17.566</div><div style="font-size:12px;">CI Lower: -1.015</div><div style="font-size:12px;">CI Upper: 4.901</div><div style="font-size:14px; font-weight: bold">CI Range:5.915</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1631111.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Wendell Moore Jr.</div><div style="font-size:12px;">RAPM: 24.246</div><div style="font-size:12px;">CI Lower: -0.447</div><div style="font-size:12px;">CI Upper: 5.418</div><div style="font-size:14px; font-weight: bold">CI Range:5.865</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627747.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Caris LeVert</div><div style="font-size:12px;">RAPM: 23.537</div><div style="font-size:12px;">CI Lower: -1.136</div><div style="font-size:12px;">CI Upper: 4.758</div><div style="font-size:14px; font-weight: bold">CI Range:5.894</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630533.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Ziaire Williams</div><div style="font-size:12px;">RAPM: -33.240</div><div style="font-size:12px;">CI Lower: -0.430</div><div style="font-size:12px;">CI Upper: 5.512</div><div style="font-size:14px; font-weight: bold">CI Range:5.942</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1627763.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Malcolm Brogdon</div><div style="font-size:12px;">RAPM: 15.877</div><div style="font-size:12px;">CI Lower: 0.372</div><div style="font-size:12px;">CI Upper: 6.117</div><div style="font-size:14px; font-weight: bold">CI Range:5.745</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629628.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">RJ Barrett</div><div style="font-size:12px;">RAPM: 12.146</div><div style="font-size:12px;">CI Lower: 0.743</div><div style="font-size:12px;">CI Upper: 6.032</div><div style="font-size:14px; font-weight: bold">CI Range:5.289</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1630284.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Kevon Harris</div><div style="font-size:12px;">RAPM: 14.839</div><div style="font-size:12px;">CI Lower: -0.985</div><div style="font-size:12px;">CI Upper: 5.404</div><div style="font-size:14px; font-weight: bold">CI Range:6.389</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628436.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Luke Kornet</div><div style="font-size:12px;">RAPM: 10.554</div><div style="font-size:12px;">CI Lower: -3.306</div><div style="font-size:12px;">CI Upper: 5.106</div><div style="font-size:14px; font-weight: bold">CI Range:8.412</div></div><div style="text-align:center;"><img src="https://cdn.nba.com/headshots/nba/latest/1040x760/1629130.png" style="width:90px;"><div style="font-size:14px; font-weight: bold">Duncan Robinson</div><div style="font-size:12px;">RAPM: 12.284</div><div style="font-size:12px;">CI Lower: 0.575</div><div style="font-size:12px;">CI Upper: 6.354</div><div style="font-size:14px; font-weight: bold">CI Range:5.778</div></div></div>
+</div>
+</div>
+<p>There is an overlap here in the Top 20</p>
 </section>
 <section id="impact-of-minutes-played-on-confidence-intervals" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="impact-of-minutes-played-on-confidence-intervals">Impact of Minutes Played on Confidence Intervals:</h4>
-<p>One potential use of a model like this is to find players who do not play much but who might do well with more opportunity. Calculate the standard errors of each coefficient from the bootstrap samples and make a scatterplot of standard error versus minutes played. Comment on the relationship between minutes played and standard error- does it make sense to you intuitively and/or statistically?</p>
+<p>One potential use of a model like this is to find players who do not play much but who might do well with more opportunity. Calculate the standard errors of each coefficient from the bootstrap samples and make a scatterplot of standard error versus minutes played.</p>
+<p>Comment on the relationship between minutes played and standard error- does it make sense to you intuitively and/or statistically?</p>
 </section>
+<div id="c2f3b641" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>players[<span class="st">"se"</span>]<span class="op">=</span>np.std(boot, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="46197831" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>players, x<span class="op">=</span><span class="st">"t_minutes"</span>, y<span class="op">=</span><span class="st">"se"</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Standard Error vs Minutes Played"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The plot is not as dramatic as the funnel earlier but there is still many differences in variation on <code>t_minues</code> so there is heteroscaticity here. The relationship between <code>se</code> and <code>t_minutes</code> is not strong, but with the alpha at 0.4 I can notice that the points that overlap have a little curve. Maybe theres a nonlinear relationship? I’m not sure.</p>
 <section id="comparison-to-bayesian-credible-intervals" class="level4 alert alert-dismissible alert-light">
 <h4 class="anchored" data-anchor-id="comparison-to-bayesian-credible-intervals">Comparison to Bayesian Credible Intervals:</h4>
-<p>Bayesian statistics (<em>which you should have learned about briefly in DATA 606</em>) is a field of statistics based on an interpretation of probability as referring to uncertainty about the real world rather than as the frequency of outcomes in repeated experiments. In the Bayesian framework, it is normal to talk about the probability distribution of model parameters, which leads to the concept of a ‘credible interval’, defined as an interval with a certain probability of containing the model parameter (a 92\% credible interval would have a 92\% chance of containing the model parameter). Credible intervals often correspond closely to confidence intervals captured using standard statistics, but this problem is one case where they diverge sharply.<br>
+<p>Bayesian statistics (<em>which you should have learned about briefly in DATA 606</em>) is a field of statistics based on an interpretation of probability as referring to uncertainty about the real world rather than as the frequency of outcomes in repeated experiments. In the Bayesian framework, it is normal to talk about the probability distribution of model parameters, which leads to the concept of a <code>credible interval</code>, defined as an interval with a certain probability of containing the model parameter (a 92% credible interval would have a 92% chance of containing the model parameter). Credible intervals often correspond closely to confidence intervals captured using standard statistics, but this problem is one case where they diverge sharply.<br>
 <br>
 Ridge regression has an interpretation in Bayesian statistics, where the regularization parameter corresponds to the strength of a prior belief that the model coefficients have a normal distribution centered around zero and with variance inversely proportional to the regularization penalty <span class="math inline">\(\alpha\)</span>.<br>
 <br>
@@ -498,42 +1638,55 @@ For ridge regression interpreted as Bayesian statistics, there is an exact formu
 Use the code below and calculate the Bayesian standard errors for each ‘RAPM’ coefficient. Make a plot of the Bayesian standard errors versus minutes played and compare to the standard errors calculated from the bootstrap. In which part of the range is the agreement highest? In which part is the disagreement highest? Focusing on the areas where the disagreement is highest, put yourself in the shoes of someone using the model and discuss which estimate of uncertainty is more realistic and why.</p>
 <p>(<em>You will need to adapt the code below to your variable names and data structures.</em>)</p>
 </section>
-<div id="c4ebadc6" class="cell" data-execution_count="4">
+<div id="1bf28de2" class="cell" data-execution_count="22">
 <details class="code-fold">
 <summary>Code to calculate standard errors and Bayesian credible intervals</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Here MarginVector is your Target</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># StintMatrix are your observations</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># WeightVector are your weights</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># model_ridge is your selected model</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha_opt is the optimal regularization parameter from cross validation</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> WeightVector.values <span class="co"># Need to do this is WeightVector is a pandas series or df etc</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>stint_mat <span class="op">=</span> StintMatrix.values <span class="co"># Ditto</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>margin_vec <span class="op">=</span> MarginVector.values <span class="co"># Ditto</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> np.average((margin_vec <span class="op">-</span> model_ridge.predict(stint_mat))<span class="op">**</span><span class="dv">2</span>, weights<span class="op">=</span>weights) <span class="co"># We need to incorporate weights into variance calculation</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>num_players <span class="op">=</span> stint_mat.shape[<span class="dv">1</span>]</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>AMat <span class="op">=</span> (stint_mat <span class="op">*</span> weights.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)).T <span class="op">@</span> stint_mat <span class="op">+</span> alpha_opt <span class="op">*</span> np.eye(num_players)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the covariance matrix. You could find very high covariance between players on the same teams</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>posterior_covariance <span class="op">=</span> var <span class="op">*</span> np.linalg.inv(AMat) </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>se_vec <span class="op">=</span> np.sqrt(np.diag(posterior_covariance)) <span class="co"># These are the standard errors</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Here MarginVector is your Target</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># StintMatrix are your observations</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># WeightVector are your weights</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># model_ridge is your selected model</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># alpha_opt is the optimal regularization parameter from cross validation</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>model_ridge<span class="op">=</span> m4</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> stints[<span class="st">"n_pos"</span>].values <span class="co"># Need to do this is WeightVector is a pandas series or df etc</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>stint_mat <span class="op">=</span> stints2 <span class="co"># Ditto</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>margin_vec <span class="op">=</span> stints[<span class="st">"margin"</span>].values <span class="co"># Ditto</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>var <span class="op">=</span> np.average((margin_vec <span class="op">-</span> model_ridge.predict(stint_mat))<span class="op">**</span><span class="dv">2</span>, weights<span class="op">=</span>weights) <span class="co"># We need to incorporate weights into variance calculation</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>num_players <span class="op">=</span> stints2.shape[<span class="dv">1</span>]</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>AMat <span class="op">=</span> (stints2 <span class="op">*</span> weights.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)).T <span class="op">@</span> stints2 <span class="op">+</span> alpha_opt <span class="op">*</span> np.eye(num_players)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the covariance matrix. You could find very high covariance between players on the same teams</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>posterior_covariance <span class="op">=</span> var <span class="op">*</span> np.linalg.inv(AMat) </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>se_vec <span class="op">=</span> np.sqrt(np.diag(posterior_covariance)) <span class="co"># These are the standard errors</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 </section>
 <section id="extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations" class="level2 alert alert-dismissible alert-light">
 <h2 class="anchored" data-anchor-id="extra-credit-5-points-ridge-versus-lasso-and-confidencecredible-interval-calculations">Extra Credit (5 Points): Ridge versus Lasso and Confidence/Credible Interval Calculations</h2>
 <p>An alternative to ridge regression that is used for variable selection is called the Lasso. The Lasso differs penalty causes a large number of model coefficients to be zero, making it a good tool for variable selection and for creating interpretable models.</p>
-<p>Use <code>LassoCV</code> to calculate the ‘RAPM’ coefficients. I recommend using regularization weights that range between <span class="math inline">\(10^{-4}\)</span> and <span class="math inline">\(10^2\)</span> (the scale needs to be different compared to ridge regression).</p>
-<p>Compare the ‘RAPM’ values calculated with lasso to those calculated with ridge regression. Are there any notable differences in the top 20 players? Find the 10 players with the largest difference between lasso RAPM and Ridge RAPM in both directions (ridge greater than lasso and lasso greater than ridge). Within the players where there was large disagreement, consider how the players performed in the next NBA season (you may do this however you like, I recommend reading media reports about those players during the next season) and determine which model was more correct when it comes to players with large disagreements.</p>
-<p>There is a subtle conceptual flaw in how the confidence or credible intervals were calculated in this lab. This is apparent if you paid very close attention during the meetup. Can you tell me what it is?</p>
+<p>Use <code>LassoCV</code> to calculate the <code>RAPM</code> coefficients. I recommend using regularization weights that range between <span class="math inline">\(10^{-4}\)</span> and <span class="math inline">\(10^2\)</span> (the scale needs to be different compared to ridge regression).</p>
+<p>Compare the <code>RAPM</code> values calculated with lasso to those calculated with ridge regression. Are there any notable differences in the top 20 players?</p>
+<p>Find the 10 players with the largest difference between lasso RAPM and Ridge RAPM in both directions (ridge greater than lasso and lasso greater than ridge). Within the players where there was large disagreement, consider how the players performed in the next NBA season (you may do this however you like, I recommend reading media reports about those players during the next season) and determine which model was more correct when it comes to players with large disagreements.</p>
+<p><strong>There is a subtle conceptual flaw in how the confidence or credible intervals were calculated in this lab. This is apparent if you paid very close attention during the meetup. Can you tell me what it is?</strong></p>
 </section>
+<div id="3d87a85f" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#--reg weights-- </span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>lasso_alpha<span class="op">=</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#--Lasso RAPM Coefficients--</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#-- Lasso vs Ridge Coefficients-- </span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>top20[<span class="st">"ci_range"</span>]<span class="op">=</span> top20[<span class="st">"ci_upper"</span>]<span class="op">-</span>top20[<span class="st">"ci_lower"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The conceptual flaw in how the confidence intervals were calculated might be that there is a bottleneck in the amount of players that can be on the court. Confidence intervals are percentages indicating where an observation falls. There is a cap the probability of being on the court and i dont think that is accounted for here.</p>
 <hr>
 <section id="bibliography" class="level1">
 <h1>Bibliography</h1>
