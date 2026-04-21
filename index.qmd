@@ -7,6 +7,8 @@ format:
     code-overflow: wrap
     code-block-bg: true
     highlight-style: flatly
+  pdf:
+    toc: true
 toc: true
 toc-depth: 6
 toc-location: right
@@ -66,14 +68,14 @@ to their team's net performance for every 100 possessions of a basketball game
 of the ball, games consist of a series of alternating possessions and there are
 usually about 200 possessions in a game, 100 per team).\
 
-Suppose that two teams are playing against each other, and that the 'lineups' of
+Suppose that two teams are playing against each other, and that the "lineups" of
 the two teams stay the same for a certain number of possessions, call it
 `num_pos`. This period of time with constant lineups is called a `stint`, and
 **we can model the probability distribution for the point "margin",** defined
 as:
 
 $$
-\mathrm{points\_home} - \mathrm{points\_road})\cdot \frac{100}{\mathrm{n\_pos}}
+(\mathrm{points\_home} - \mathrm{points\_road})\cdot \frac{100}{\mathrm{n\_pos}}
 $$
 
 in the 'stint' using the following formula:
@@ -178,7 +180,7 @@ problem here **but** by the nature of the in-sample measurement I would always
 expect it to be lower than the cross validated.
 
 ::: {.alert .alert-dismissible .alert-light}
-#### **Examining 'RAPM' Coefficients:**
+#### **Examining `RAPM` Coefficients:**
 
 Create a dataframe with the player-ids, the RAPM coefficients, and join it with
 the player names (from the data file shared earlier).
@@ -190,7 +192,7 @@ Sort the players in descending order by 'RAPM' and print the top 20 players by
 'RAPM'. What do you notice about their minutes played? Look up the names of a
 few of the top players on the internet- are they regarded as top NBA players?\
 \
-Make a scatter plot of 'RAPM' versus minutes-played.
+Make a scatter plot of `RAPM` versus minutes-played.
 :::
 
 --------------------------------------------------------------------------------
@@ -254,7 +256,8 @@ HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{
 ```
 
 I'm not familiar with the NBA, but I can accurately say Lebron James is not in
-this lineup.
+this lineup. On a side note, the resulting top 20 do share low play time so the
+high RAPM scores might be assigned to players who don't play for very long.
 
 ```{python}
 #-- fixing sns--
@@ -322,12 +325,12 @@ top20= top20.copy()
 #-- adding the ids to the base url--
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
-header= "<h1 style='text-align:center;'>Model 2: Top 20 by RAPM</h1>"
+header= "<h1 style='text-align:center;'>Model 2: Top 20 by RAPM (Ridge)</h1>"
 p_cards = "".join(
     f"<div style='text-align:center;'>"
     f"<img src='{row.image_url}' style='width:90px;'>"
-    f"<div style= 'font-size:13px;'>{row.player_name}</div>"
-    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:13px;font-weight: bold'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm2:.3f}</div>"
     f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
     f"</div>"
     for player, row in top20.iterrows())
@@ -388,8 +391,7 @@ players changed?
 ##### Scatterplot for Scaled Margin
 
 ```{python}
-stints["correction"]= stints["margin"] * np.sqrt(stints["n_pos"])
-sns.scatterplot(data=stints, x="n_pos", y="correction", alpha= 0.3)
+sns.scatterplot(data=stints, x="n_pos", y=stints["margin"] * np.sqrt(stints["n_pos"]), alpha= 0.3)
 plt.title("Number of Posessions vs Player Margin (scaled) in a Stint")
 plt.ylabel("Margin Rate x sqrt(Number of Posessions)")
 plt.show()
@@ -403,7 +405,7 @@ m3= RidgeCV(alphas=alpha, fit_intercept= True)
 m3.fit(x,y, sample_weight= stints["n_pos"])
 
 #--pulling the ridge values--
-rapm3=dict(zip(players["player_id"].astype(int), m3.coef_))
+rapm3=dict(zip(x.columns.astype(int), m3.coef_))
 players["rapm3"]= players["player_id"].map(rapm3)
 players= players.sort_values("rapm3", ascending= False)
 top20=pd.DataFrame(players.head(20))
@@ -421,8 +423,8 @@ header= "<h1 style='text-align:center;'>Model 3: Top 20 by RAPM</h1>"
 p_cards = "".join(
     f"<div style='text-align:center;'>"
     f"<img src='{row.image_url}' style='width:90px;'>"
-    f"<div style= 'font-size:13px;'>{row.player_name}</div>"
-    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:13px;font-weight: bold'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm3:.3f}</div>"
     f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
     f"</div>"
     for player, row in top20.iterrows())
@@ -455,6 +457,10 @@ much do the intervals of the top 20 overlap?
 ##### Boot Loop
 
 ```{python}
+
+boot_ridge= Ridge(alpha=m3.alpha_, fit_intercept=True)
+boot_ridge.fit(x, y, sample_weight=stints["n_pos"])
+
 #--calculating bootstrap samples--
 boot=[]
 
@@ -476,9 +482,9 @@ boot= np.array(boot)
 
 ```{python}
 #--matching the Player IDs--
-rapm4=dict(zip(players["player_id"].astype(int), m4.coef_))
-cil_map= dict(zip(players["player_id"].astype(int), np.percentile(boot, 4, axis=0)))
-ciu_map= dict(zip(players["player_id"].astype(int), np.percentile(boot, 96, axis=0)))
+rapm4=dict(zip(x.columns.astype(int), m4.coef_))
+cil_map= dict(zip(x.columns.astype(int), np.percentile(boot, 4, axis=0)))
+ciu_map= dict(zip(x.columns.astype(int), np.percentile(boot, 96, axis=0)))
 
 #-- Adding the Cis
 players= players.copy()
@@ -504,7 +510,7 @@ p_cards = "".join(
     f"<div style='text-align:center;'>"
     f"<img src='{row.image_url}' style='width:90px;'>"
     f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
-    f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
+    f"<div style= 'font-size:12px;'>RAPM: {row.rapm4:.3f}</div>"
     f"<div style= 'font-size:12px;'>CI Lower: {row.ci_lower:.3f}</div>"
     f"<div style= 'font-size:12px;'>CI Upper: {row.ci_upper:.3f}</div>"
     f"<div style= 'font-size:14px; font-weight: bold'>CI Range:{row.ci_range:.3f}</div>"
@@ -584,7 +590,7 @@ structures.*)
 
 ```{python}
 #| echo: True
-#| eval: False
+#| eval: true
 #| code-fold: true
 #| code-summary: "Code to calculate standard errors and Bayesian credible intervals"
 
@@ -592,23 +598,52 @@ structures.*)
 # StintMatrix are your observations
 # WeightVector are your weights
 # model_ridge is your selected model
-# alpha_opt is the optimal regularization parameter from cross validation
 
-model_ridge= m4
-weights = stints["n_pos"].values # Need to do this is WeightVector is a pandas series or df etc
-stint_mat = stints2 # Ditto
-margin_vec = stints["margin"].values # Ditto
+# alpha_opt is the optimal regularization parameter from cross validation
+x = stints.iloc[:,7:] 
+y = stints["margin"]
+model_ridge = Ridge(alpha=m2.alpha_, fit_intercept=True)
+model_ridge.fit(x, y, sample_weight=stints["n_pos"])
+
+weights = stints["n_pos"].to_numpy() # Need to do this is WeightVector is a pandas series or df etc
+stint_mat = stints.iloc[:,7:] # Ditto
+margin_vec = stints["margin"] # Ditto
+alpha_opt= m2.alpha_
+
 
 var = np.average((margin_vec - model_ridge.predict(stint_mat))**2, weights=weights) # We need to incorporate weights into variance calculation
+num_players = stint_mat.shape[1]
 
-num_players = stints2.shape[1]
-
-AMat = (stints2 * weights.reshape(-1, 1)).T @ stints2 + alpha_opt * np.eye(num_players)
+AMat = (stint_mat * weights.reshape(-1, 1)).T @ stint_mat + alpha_opt * np.eye(num_players)
 
 # This is the covariance matrix. You could find very high covariance between players on the same teams
+
 posterior_covariance = var * np.linalg.inv(AMat) 
-se_vec = np.sqrt(np.diag(posterior_covariance)) # These are the standard errors
+
+se_vec = np.sqrt(np.diag(posterior_covariance)) #These are the standard errors
 ```
+
+```{python}
+
+se_boot= np.std(boot, axis=0, ddof=1)
+se_boot_map= dict(zip(x.columns.astype(int), se_boot))
+players["se_boot"]= players["player_id"].astype(int).map(se_boot_map)
+
+se_bayes_map = dict(zip(x.columns.astype(int), se_vec))
+players["se_bayes"] = players["player_id"].astype(int).map(se_bayes_map)
+
+#--plotting--
+sns.scatterplot(data= players, x= "t_minutes", y= "se_boot", alpha= 0.4, label="Bootstrap")
+sns.scatterplot(data= players, x= "t_minutes", y= "se_bayes", alpha= 0.4, label="Bayesian")
+
+plt.xlabel("Play time in minutes")
+plt.ylabel("Standard Error")
+plt.title("Bootstrap vs Bayesian S.E's by Minutes Played")
+plt.legend()
+plt.show()
+```
+
+The standard error is higher in Bootstrap than Bayesian.
 
 ## Conclusion
 
@@ -641,23 +676,50 @@ during the meetup. Can you tell me what it is?**
 
 ```{python}
 #| echo: True
-#| eval: False
+#| eval: True
 
 #--reg weights-- 
-lasso_alpha=
+lasso_alpha= np.logspace(-4, 2, 1000)
 
 #--Lasso RAPM Coefficients--
+m5= LassoCV(alphas=lasso_alpha, fit_intercept=True)
+m5.fit(x,y, sample_weight=stints["n_pos"])
 
-#-- Lasso vs Ridge Coefficients-- 
+#--Mapping RAPMs--
+#ridge
+rapm_Ridge= dict(zip(x.columns.astype(int), m4.coef_))
+players= players.copy()
+players["rapm_Ridge"]= players["player_id"].map(rapm_Ridge)
+#lasso
+rapm_Lasso=dict(zip(x.columns.astype(int), m5.coef_))
+players["rapm_Lasso"]= players["player_id"].map(rapm_Lasso)
 
+players= players.sort_values("rapm_Lasso", ascending= False)
+top20=pd.DataFrame(players.head(20))
+top20= top20.copy()
+```
 
-top20["ci_range"]= top20["ci_upper"]-top20["ci_lower"]
+```{python}
+top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Model 4: Top 20 by RAPM (after Bootstrapping)</h1>"
+
+p_cards = "".join(
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>Ridge: {row['rapm_Ridge']:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Laso: {row['rapm_Lasso']:.3f}</div>"
+    f"</div>"
+    for player, row in top20.iterrows())
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
 The conceptual flaw in how the confidence intervals were calculated might be
 that there is a bottleneck in the amount of players that can be on the court.
 Confidence intervals are percentages indicating where an observation falls.
-There is a cap the probability of being on the court and i dont think that is
+There is a cap the probability of being on the court and i don't think that is
 accounted for here.
 
 --------------------------------------------------------------------------------
