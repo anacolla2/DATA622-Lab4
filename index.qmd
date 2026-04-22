@@ -7,11 +7,10 @@ format:
     code-overflow: wrap
     code-block-bg: true
     highlight-style: flatly
-  pdf:
-    toc: true
 toc: true
 toc-depth: 6
 toc-location: right
+embed-resources: true
 editor: visual
 jupyter: python3
 ---
@@ -123,7 +122,7 @@ file.
 In the following you will be exploring different ways of calculating the the
 RAPM model coefficients and interpreting them in terms of player skill.
 
-## Problem 1: Ridge Regression for Inference
+# Problem 1: Ridge Regression for Inference
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Ordinary Linear Regression:**
@@ -143,8 +142,8 @@ suggest a major problem with overfitting?
 
 ##### Prep:
 
-The target (*y* variable) is `$margin` and the predictors are the player,
-everything past column 7.
+▐ The "target" (*y* variable) is `$margin` , and the "predictors" are the
+players- everything past column 7.
 
 ```{python}
 x=stints.iloc[:,7:]
@@ -168,16 +167,19 @@ mse_insamp= mean_squared_error(y, y_p)
 #--cross-validated--
 cv= cross_val_score(m1, x, y, scoring="neg_mean_squared_error")
 cv= -cv.mean()
+difference= (cv-mse_insamp)/mse_insamp
 
 print(f"In-Sample MSE:{mse_insamp}")
 print(f"Cross-Validated MSE:{cv}")
+print(f"Difference: {difference.round(2)}%")
 ```
 
-The in-sample mean squared error was lower than the cross validated. The error
-is because the predictions come directly from the training datapoints. The
-values are pretty close to each other, I can't say there's an overfitting
-problem here **but** by the nature of the in-sample measurement I would always
-expect it to be lower than the cross validated.
+▐ The in-sample mean squared error was lower than the cross validated. This is
+because the predictions come directly from the training datapoints. The values
+are pretty close to each other with only a 0.06% difference. I don't believe
+there is an overfitting problem here **but** by the nature of the in-sample
+measurement I would asusme the in-sample MSE would typically be lower than the
+cross validated.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Examining `RAPM` Coefficients:**
@@ -205,7 +207,7 @@ Make a scatter plot of `RAPM` versus minutes-played.
 players= pd.read_csv("https://raw.githubusercontent.com/georgehagstrom/DATA622Spring2026/refs/heads/main/website/assignments/labs/labData/player_id.csv")
 
 #--Model RAPM Coefficients--
-rapm=dict(zip(players["player_id"].astype(int), m1.coef_))
+rapm=dict(zip(x.columns.astype(int), m1.coef_))
 players["rapm"]= players["player_id"].map(rapm)
 
 #--Join Stints--
@@ -227,9 +229,9 @@ players= players.merge(players2, on="player_id", how= "left")
 players= players.sort_values("rapm", ascending= False)
 ```
 
-The player matrix `stint x player`, transposed, becomes `player x stint`. In
-this shape, I could multiply the array of minutes to produce the minutes played
-per stint.
+▐ The player matrix `stint x player`, transposed, becomes `player x stint`. In
+this shape, we can multiply the array of minutes to produce the minutes played
+per stint. The result is the lineup below:
 
 ##### Player Top 20 Lineup
 
@@ -246,7 +248,7 @@ header= "<h1 style='text-align:center;'>Top 20 by RAPM</h1>"
 p_cards = "".join(
     f"<div style='text-align:center;'>"
     f"<img src='{row.image_url}' style='width:90px;'>"
-    f"<div style= 'font-size:13px;'>{row.player_name}</div>"
+    f"<div style= 'font-size:13px;font-weight: bold'>{row.player_name}</div>"
     f"<div style= 'font-size:12px;'>RAPM: {row.rapm:.3f}</div>"
     f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
     f"</div>"
@@ -255,9 +257,13 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-I'm not familiar with the NBA, but I can accurately say Lebron James is not in
-this lineup. On a side note, the resulting top 20 do share low play time so the
-high RAPM scores might be assigned to players who don't play for very long.
+▐ I'm not familiar with the NBA, but I can accurately say Lebron James is *not*
+in this lineup! In my research the players don't seem to be very well known.
+Gabe York doesn't have a headshot and as far as I know, no longer plays in the
+NBA. If we take a closer look, his stats would make him legendary. An RAPM of 77
+would mean Gabe is expected to add 77 points to his team's net per 100
+possessions. Even Chris Silva, with 7 minutes of play time, is expected to
+contribute 41 points. The linear model might be overfitting.
 
 ```{python}
 #-- fixing sns--
@@ -271,8 +277,10 @@ plt.title("NBA Player RAPM Score vs Total Minutes Played ")
 plt.show()
 ```
 
-The scatterplot shows the linear relationship between `rapm` and `t_minutes` is
-basically zero.
+▐ The scatterplot shows the linear relationship between `rapm` and `t_minutes`
+is weak and near zero. Its funnel shaped because the data points near 0 playtime
+have an incredibly large range. This variability suggests this an issue in the
+RAPM calculations.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Ridge Regression RAPM:**
@@ -301,22 +309,23 @@ Make a scatterplot of `RAPM` versus minutes played.
 #| eval: true
 #| error: false
 #| warning: false
+#| message: false
 alpha= np.logspace(-2, 5, 50)
-m2= RidgeCV(alphas=alpha, fit_intercept= True, cv=5)
+m2= RidgeCV(alphas=alpha, fit_intercept= True)
 m2.fit(x,y)
 ```
 
 ##### Optimal Value of Alpha
 
 ```{python}
-print(f"Optimal Value of alpha: {m2.alpha_.round(2)}")
+print(f"Optimal Value of alpha: {round(m2.alpha_, 2)}")
 ```
 
 ##### Model 2 Player Top 20 Lineup
 
 ```{python}
 #--pulling the ridge values--
-rapm2=dict(zip(players["player_id"].astype(int), m2.coef_))
+rapm2=dict(zip(x.columns.astype(int), m2.coef_))
 players["rapm2"]= players["player_id"].map(rapm2)
 players= players.sort_values("rapm2", ascending= False)
 top20=pd.DataFrame(players.head(20))
@@ -338,7 +347,27 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-## Problem 2: Possession Weights
+▐ Ridge regression changed the top 20 significantly. Zach LaVine and Andre
+Iguodala are the only players in the Top 20 that remain from the first round–
+everything else changed. Most notably, the RAPM scores are lower, ranging from
+\~2.9 to 5.7, instead of high 30s and 40s. The players for the most part have
+higher play times which (intuitively) is more reliable.
+
+The scatter plot below shows the model RAPM scores against total minutes played.
+The scatter is correctly gathering near zero RAPM for players whose time played
+is also near zero. On the other end players who have spent more time on the
+court have varied RAPM scores, so being on the court longer isn't necessarily
+equal to high RAPM, which is a good thing. Overall, this Ridge model is probably
+more accurate than the cross validated in Problem 1.
+
+```{python}
+#-- Visualize RAPM--
+sns.scatterplot(data= players, x="t_minutes", y="rapm2", alpha= 0.6)
+plt.title("NBA Player RAPM Score vs Total Minutes Played ")
+plt.show()
+```
+
+# Problem 2: Possession Weights
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Heteroscedasticity in Stints:**
@@ -348,9 +377,9 @@ in a stint. What do you notice about the variance of `margin`? Why do you think
 it is happening?
 :::
 
-The plot below is a funnel shape, it goes from wide variance to low variance. It
-seems symmetrical if sliced at zero. It is an example pf heteroscedasticity as
-the variance is not constant but seems to have a pattern.
+▐ The plot below is a funnel shaped. Low possession are highly variable, while
+high possessions are not. Its lack of contant variance is characteristic of
+heteroscedasticity.
 
 ```{python}
 sns.scatterplot(data=stints, x="n_pos", y="margin", alpha= 0.3)
@@ -378,7 +407,7 @@ the variance is high, and larger for stints where the variance is low. This
 forces the model to fit the low-variance stints more closely than the
 high-variance stints. The correct weights for this problem are the
 $w_i = \mathrm{num\_pos}_i$, which implies that the variance of the margin is
-inversely proportional to the number of stints.\
+inversely proportional to the number of stints.
 
 Verify this by making a scatter plot of the margin rate times the square root of
 the number of possessions versus the number of possessions.
@@ -389,6 +418,10 @@ players changed?
 :::
 
 ##### Scatterplot for Scaled Margin
+
+▐ Using weighted least squares has helped the heteroscedasticity seen in the
+scatter plot above. Although it is still slightly funnel shaped, the new plot
+below has a more uniform variance.
 
 ```{python}
 sns.scatterplot(data=stints, x="n_pos", y=stints["margin"] * np.sqrt(stints["n_pos"]), alpha= 0.3)
@@ -418,7 +451,7 @@ top20= top20.copy()
 #-- adding the ids to the base url p3--
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
-header= "<h1 style='text-align:center;'>Model 3: Top 20 by RAPM</h1>"
+header= "<h1 style='text-align:center;'>Model 3: Top 20 by RAPM (WLS)</h1>"
 
 p_cards = "".join(
     f"<div style='text-align:center;'>"
@@ -432,14 +465,17 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-## Problem 3: Interpreting Bootstrap Uncertainty
+▐ After adding number of possessions as the weighted variable to this model, the
+resulting Top 20 is
+
+# Problem 3: Interpreting Bootstrap Uncertainty
 
 ::: {.alert .alert-dismissible .alert-light}
 #### Calculate Confidence Intervals Using the Bootstrap:
 
 Suppose you are a general manager for a basketball team. You want to identify
 candidate players to add to your team, but you are unsure how certain to be
-about the 'RAPM' coefficients for the model. The bootstrap is a standard
+about the `RAPM` coefficients for the model. The bootstrap is a standard
 approach for calculating confidence intervals for model coefficients.
 
 Use either the `resample` function from `sklearn` or `np.random.choice` along
@@ -501,7 +537,7 @@ top20["ci_range"]= top20["ci_upper"]-top20["ci_lower"]
 ##### Model 4 Player Top 20 Lineup
 
 ```{python}
-#-- adding the ids to the base url p3--
+#-- adding the ids to the base url p4--
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
 header= "<h1 style='text-align:center;'>Model 4: Top 20 by RAPM (after Bootstrapping)</h1>"
@@ -511,8 +547,8 @@ p_cards = "".join(
     f"<img src='{row.image_url}' style='width:90px;'>"
     f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
     f"<div style= 'font-size:12px;'>RAPM: {row.rapm4:.3f}</div>"
-    f"<div style= 'font-size:12px;'>CI Lower: {row.ci_lower:.3f}</div>"
-    f"<div style= 'font-size:12px;'>CI Upper: {row.ci_upper:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Play Time: {row.t_minutes}</div>"
+    f"<div style= 'font-size:12px;'>CI:({row.ci_lower:.3f}, {row.ci_upper:.3f})</div>"
     f"<div style= 'font-size:14px; font-weight: bold'>CI Range:{row.ci_range:.3f}</div>"
     f"</div>"
     for player, row in top20.iterrows())
@@ -520,7 +556,7 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-There is an overlap here in the Top 20
+▐ There is an overlap here in the Top 20
 
 ::: {.alert .alert-dismissible .alert-light}
 #### Impact of Minutes Played on Confidence Intervals:
@@ -544,7 +580,7 @@ plt.title("Standard Error vs Minutes Played")
 plt.show()
 ```
 
-The plot is not as dramatic as the funnel earlier but there is still many
+▐ The plot is not as dramatic as the funnel earlier but there is still many
 differences in variation on `t_minues` so there is heteroscaticity here. The
 relationship between `se` and `t_minutes` is not strong, but with the alpha at
 0.4 I can notice that the points that overlap have a little curve. Maybe theres
@@ -704,19 +740,19 @@ top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn
 
 header= "<h1 style='text-align:center;'>Model 4: Top 20 by RAPM (after Bootstrapping)</h1>"
 
-p_cards = "".join(
+p_cards = "".join([
     f"<div style='text-align:center;'>"
     f"<img src='{row.image_url}' style='width:90px;'>"
     f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
     f"<div style= 'font-size:12px;'>Ridge: {row['rapm_Ridge']:.3f}</div>"
-    f"<div style= 'font-size:12px;'>Laso: {row['rapm_Lasso']:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Lasso: {row['rapm_Lasso']:.3f}</div>"
     f"</div>"
-    for player, row in top20.iterrows())
+    for player, row in top20.iterrows()])
     
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-The conceptual flaw in how the confidence intervals were calculated might be
+▐ The conceptual flaw in how the confidence intervals were calculated might be
 that there is a bottleneck in the amount of players that can be on the court.
 Confidence intervals are percentages indicating where an observation falls.
 There is a cap the probability of being on the court and i don't think that is
