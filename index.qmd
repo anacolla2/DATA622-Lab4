@@ -233,7 +233,7 @@ players= players.sort_values("rapm", ascending= False)
 this shape, we can multiply the array of minutes to produce the minutes played
 per stint. The result is the lineup below:
 
-##### Player Top 20 Lineup
+### Top 20 Lineup: Linear Model
 
 ```{python}
 #-- The players have a headshot and the ID's are real!-- 
@@ -258,12 +258,11 @@ HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{
 ```
 
 ▐ I'm not familiar with the NBA, but I can accurately say Lebron James is *not*
-in this lineup! In my research the players don't seem to be very well known.
-Gabe York doesn't have a headshot and as far as I know, no longer plays in the
-NBA. If we take a closer look, his stats would make him legendary. An RAPM of 77
-would mean Gabe is expected to add 77 points to his team's net per 100
-possessions. Even Chris Silva, with 7 minutes of play time, is expected to
-contribute 41 points. The linear model might be overfitting.
+in this lineup! In my research the players don't seem to be very well known. If
+we take a closer look, Stanley Umunde's stats would make him legendary. An RAPM
+of 77 would mean Stanley is expected to add 77 points to his team's net per 100
+possessions, and this is based on 2 minutes of total play time. The linear model
+might be overfitting.
 
 ```{python}
 #-- fixing sns--
@@ -278,9 +277,9 @@ plt.show()
 ```
 
 ▐ The scatterplot shows the linear relationship between `rapm` and `t_minutes`
-is weak and near zero. Its funnel shaped because the data points near 0 playtime
-have an incredibly large range. This variability suggests this an issue in the
-RAPM calculations.
+is weak and near zero. Its funnel shaped because the data points near zero
+playtime have a large range. This variability suggests this an issue in the RAPM
+calculations.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### **Ridge Regression RAPM:**
@@ -318,10 +317,17 @@ m2.fit(x,y)
 ##### Optimal Value of Alpha
 
 ```{python}
-print(f"Optimal Value of alpha: {round(m2.alpha_, 2)}")
+#| echo: false
+#| eval: true
+#| 
+print(f"The Optimal Value of alpha is {round(m2.alpha_, 2)}")
 ```
 
-##### Model 2 Player Top 20 Lineup
+### Top 20 Lineup: RidgeCV Model
+
+<details>
+
+<summary> Show Code</summary>
 
 ```{python}
 #--pulling the ridge values--
@@ -347,18 +353,18 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-▐ Ridge regression changed the top 20 significantly. Zach LaVine and Andre
-Iguodala are the only players in the Top 20 that remain from the first round–
-everything else changed. Most notably, the RAPM scores are lower, ranging from
-\~2.9 to 5.7, instead of high 30s and 40s. The players for the most part have
-higher play times which (intuitively) is more reliable.
+</details>
+
+▐ Ridge regression changed the top 20 significantly. The RAPM scores are lower,
+ranging from \~2.9 to 5.7, instead of high 30s and 40s. The players for the most
+part have higher play times which (intuitively) is more reliable.
 
 The scatter plot below shows the model RAPM scores against total minutes played.
 The scatter is correctly gathering near zero RAPM for players whose time played
 is also near zero. On the other end players who have spent more time on the
 court have varied RAPM scores, so being on the court longer isn't necessarily
 equal to high RAPM, which is a good thing. Overall, this Ridge model is probably
-more accurate than the cross validated in Problem 1.
+more accurate than the Linear Model in Problem 1.
 
 ```{python}
 #-- Visualize RAPM--
@@ -445,7 +451,11 @@ top20=pd.DataFrame(players.head(20))
 top20= top20.copy()
 ```
 
-##### Model 3 Player Top 20 Lineup
+### Top 20 Lineup: RidgeCV WLS
+
+<details>
+
+<summary> Show Code</summary>
 
 ```{python}
 #-- adding the ids to the base url p3--
@@ -465,8 +475,13 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
+</details>
+
 ▐ After adding number of possessions as the weighted variable to this model, the
-resulting Top 20 is
+resulting Top 20 includes players I've heard of before— Devin Booker & Anthony
+Davis. Intuitively, the Rdigemodel with WLS is closer to being accurate in
+ranking the player, considering. In this top 20, RAPM scores are no higher than
+\~2.8 and all players have at least 12 hours of total play time.
 
 # Problem 3: Interpreting Bootstrap Uncertainty
 
@@ -534,7 +549,11 @@ top20= players.head(20).copy()
 top20["ci_range"]= top20["ci_upper"]-top20["ci_lower"]
 ```
 
-##### Model 4 Player Top 20 Lineup
+### Top 20 Lineup: Confidence Interval
+
+<details>
+
+<summary> Show Code</summary>
 
 ```{python}
 #-- adding the ids to the base url p4--
@@ -556,7 +575,14 @@ p_cards = "".join(
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-▐ There is an overlap here in the Top 20
+</details>
+
+▐ Most players fall within the same confidence intervals. The CI values here
+express the uncertainty within the sampling. Take the Top 2 picks, Cameron
+Johnson and Charles Bassey, for example. Cameron is assigned an RAPM of 7 with a
+92% ci that his actual RAPM is between \~0.82 and 7.5. The range is far too wide
+at 6.06. Likewise, Charles' range is a 6.5 so it's uncertain what his true
+contribution to the team is.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### Impact of Minutes Played on Confidence Intervals:
@@ -574,17 +600,18 @@ make sense to you intuitively and/or statistically?
 players["se"]=np.std(boot, axis=0)
 ```
 
+▐ The scatterplot below shows points \<1500 minutes of play time have standard
+error values with high variability. Intuitively, the variability in the
+estimates of standard error, would decrease (the vertical spread of it) as
+players spend more time on the court as there is more stint data to consider. We
+see most points above 2500 minutes are less variable and gathered between 1.5
+and 2.0.
+
 ```{python}
 sns.scatterplot(data=players, x="t_minutes", y="se", alpha=0.5)
 plt.title("Standard Error vs Minutes Played")
 plt.show()
 ```
-
-▐ The plot is not as dramatic as the funnel earlier but there is still many
-differences in variation on `t_minues` so there is heteroscaticity here. The
-relationship between `se` and `t_minutes` is not strong, but with the alpha at
-0.4 I can notice that the points that overlap have a little curve. Maybe theres
-a nonlinear relationship? I'm not sure.
 
 ::: {.alert .alert-dismissible .alert-light}
 #### Comparison to Bayesian Credible Intervals:
@@ -679,7 +706,14 @@ plt.legend()
 plt.show()
 ```
 
-The standard error is higher in Bootstrap than Bayesian.
+▐ The bootstrap standard errors come from our actual data, it has high
+variability at the lower end of total play time (\<250). It stabilizes pasts
+1500 minutes of play time and remains higher than the Bayesian scatter. The
+Bayesian standard errors are smooth and clean. Its regularization parameter
+being inversely proportional means that where we have our highest
+uncertainty/highest variability, the Bayesian se's will pull the strongest in
+the opposite direction, so towards zero. This is why I think the Bayesian
+scatter is so tightly compact at the data's widest.
 
 ## Conclusion
 
@@ -710,6 +744,10 @@ were calculated in this lab. This is apparent if you paid very close attention
 during the meetup. Can you tell me what it is?**
 :::
 
+<details>
+
+<summary>See Code</summary>
+
 ```{python}
 #| echo: True
 #| eval: True
@@ -723,7 +761,7 @@ m5.fit(x,y, sample_weight=stints["n_pos"])
 
 #--Mapping RAPMs--
 #ridge
-rapm_Ridge= dict(zip(x.columns.astype(int), m4.coef_))
+rapm_Ridge= dict(zip(x.columns.astype(int), m3.coef_))
 players= players.copy()
 players["rapm_Ridge"]= players["player_id"].map(rapm_Ridge)
 #lasso
@@ -733,24 +771,81 @@ players["rapm_Lasso"]= players["player_id"].map(rapm_Lasso)
 players= players.sort_values("rapm_Lasso", ascending= False)
 top20=pd.DataFrame(players.head(20))
 top20= top20.copy()
+
+#Differences from top 10
+players["difference"]= players["rapm_Lasso"]-players["rapm_Ridge"]
+t_Lasso= players.sort_values("difference", ascending= False).head(10)
+t_Ridge= players.sort_values("difference", ascending= True).head(10)
+
+
 ```
+
+</details>
+
+### Top 20 Lineup: Lasso
 
 ```{python}
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
-header= "<h1 style='text-align:center;'>Model 4: Top 20 by RAPM (after Bootstrapping)</h1>"
+header= "<h1 style='text-align:center;'>Top 20 Players: Lasso</h1>"
 
 p_cards = "".join([
     f"<div style='text-align:center;'>"
     f"<img src='{row.image_url}' style='width:90px;'>"
     f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
-    f"<div style= 'font-size:12px;'>Ridge: {row['rapm_Ridge']:.3f}</div>"
     f"<div style= 'font-size:12px;'>Lasso: {row['rapm_Lasso']:.3f}</div>"
+    f"<div style= 'font-size:12px;'>Ridge: {row['rapm_Ridge']:.3f}</div>"
     f"</div>"
     for player, row in top20.iterrows()])
     
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
+
+### Top 10 Players w/ Highest Lasso to Ridge Difference
+
+<details>
+
+<summary>Show Code</summary>
+
+```{python}
+t_Lasso["image_url"]= t_Lasso["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Top 10 Players w/ Highest Lasso to Ridge Difference</h1>"
+
+p_cards = "".join([
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>Difference: {row['difference']:.3f}</div>"
+    f"</div>"
+    for player, row in t_Lasso.iterrows()])
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
+```
+
+</details>
+
+### Top 10 Players w/ Highest Ridge to Lasso Difference
+
+<details>
+
+```{python}
+t_Ridge["image_url"]= t_Ridge["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
+
+header= "<h1 style='text-align:center;'>Top 10 Players w/ Highest Lasso to Ridge Difference</h1>"
+
+p_cards = "".join([
+    f"<div style='text-align:center;'>"
+    f"<img src='{row.image_url}' style='width:90px;'>"
+    f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
+    f"<div style= 'font-size:12px;'>Difference: {row['difference']:.3f}</div>"
+    f"</div>"
+    for player, row in t_Ridge.iterrows()])
+    
+HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
+```
+
+</details>
 
 ▐ The conceptual flaw in how the confidence intervals were calculated might be
 that there is a bottleneck in the amount of players that can be on the court.
