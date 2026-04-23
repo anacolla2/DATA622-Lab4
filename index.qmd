@@ -823,6 +823,21 @@ p_cards = "".join([
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
+▐ The Top 10 players with the highest Lasso to Ridge differences went on to win
+awards/titles like "All-Star" or "MVP" (except for those who had health
+issues[^1], or faced disciplinary action[^2]). In comparison, the Ridge to Lasso
+most players ended up being traded or signing with another team or did not win
+an award in 2023 (except Jeff Green who had a great year
+
+[^1]: Lakers’ Koloko Receives Medical Clearance From NBA-
+    <https://www.hoopsrumors.com/2024/10/lakers-koloko-receives-medical-clearance-from-nba.html>\
+    \
+    Kawhi Leonard has torn right meniscus-
+    <https://www.nba.com/news/kawhi-leonard-torn-right-meniscus>
+
+[^2]: Draymond Green reignites debate over 2023 playoff incident-
+    <https://basketnews.com/news-231138-draymond-green-reignites-debate-over-2023-playoff-incident.html>
+
 ▐ The conceptual flaw in how the confidence intervals were calculated might be
 that they were calculated from a single alpha. Considering the alpha determines
 the penalty, it seems a little off that we'd select one alpha and sample 400
