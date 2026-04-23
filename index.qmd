@@ -325,10 +325,6 @@ print(f"The Optimal Value of alpha is {round(m2.alpha_, 2)}")
 
 ### Top 20 Lineup: RidgeCV Model
 
-<details>
-
-<summary> Show Code</summary>
-
 ```{python}
 #--pulling the ridge values--
 rapm2=dict(zip(x.columns.astype(int), m2.coef_))
@@ -352,8 +348,6 @@ p_cards = "".join(
     
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
-
-</details>
 
 ▐ Ridge regression changed the top 20 significantly. The RAPM scores are lower,
 ranging from \~2.9 to 5.7, instead of high 30s and 40s. The players for the most
@@ -453,11 +447,9 @@ top20= top20.copy()
 
 ### Top 20 Lineup: RidgeCV WLS
 
-<details>
-
-<summary> Show Code</summary>
-
 ```{python}
+#| code-fold: true
+
 #-- adding the ids to the base url p3--
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
@@ -474,8 +466,6 @@ p_cards = "".join(
     
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
-
-</details>
 
 ▐ After adding number of possessions as the weighted variable to this model, the
 resulting Top 20 includes players I've heard of before— Devin Booker & Anthony
@@ -551,11 +541,10 @@ top20["ci_range"]= top20["ci_upper"]-top20["ci_lower"]
 
 ### Top 20 Lineup: Confidence Interval
 
-<details>
-
-<summary> Show Code</summary>
-
 ```{python}
+#| code-fold: true
+
+
 #-- adding the ids to the base url p4--
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
@@ -574,8 +563,6 @@ p_cards = "".join(
     
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
-
-</details>
 
 ▐ Most players fall within the same confidence intervals. The CI values here
 express the uncertainty within the sampling. Take the Top 2 picks, Cameron
@@ -744,10 +731,6 @@ were calculated in this lab. This is apparent if you paid very close attention
 during the meetup. Can you tell me what it is?**
 :::
 
-<details>
-
-<summary>See Code</summary>
-
 ```{python}
 #| echo: True
 #| eval: True
@@ -776,15 +759,14 @@ top20= top20.copy()
 players["difference"]= players["rapm_Lasso"]-players["rapm_Ridge"]
 t_Lasso= players.sort_values("difference", ascending= False).head(10)
 t_Ridge= players.sort_values("difference", ascending= True).head(10)
-
-
 ```
-
-</details>
 
 ### Top 20 Lineup: Lasso
 
 ```{python}
+#| code-fold: true
+
+
 top20["image_url"]= top20["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
 header= "<h1 style='text-align:center;'>Top 20 Players: Lasso</h1>"
@@ -794,7 +776,7 @@ p_cards = "".join([
     f"<img src='{row.image_url}' style='width:90px;'>"
     f"<div style= 'font-size:14px; font-weight: bold'>{row.player_name}</div>"
     f"<div style= 'font-size:12px;'>Lasso: {row['rapm_Lasso']:.3f}</div>"
-    f"<div style= 'font-size:12px;'>Ridge: {row['rapm_Ridge']:.3f}</div>"
+    f"<div style= 'font-size:10px;'>Ridge: {row['rapm_Ridge']:.3f}</div>"
     f"</div>"
     for player, row in top20.iterrows()])
     
@@ -803,11 +785,9 @@ HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{
 
 ### Top 10 Players w/ Highest Lasso to Ridge Difference
 
-<details>
-
-<summary>Show Code</summary>
-
 ```{python}
+#| code-fold: true
+
 t_Lasso["image_url"]= t_Lasso["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
 header= "<h1 style='text-align:center;'>Top 10 Players w/ Highest Lasso to Ridge Difference</h1>"
@@ -823,13 +803,11 @@ p_cards = "".join([
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-</details>
-
 ### Top 10 Players w/ Highest Ridge to Lasso Difference
 
-<details>
-
 ```{python}
+#| code-fold: true
+
 t_Ridge["image_url"]= t_Ridge["player_id"].astype(str).apply(lambda x: f"https://cdn.nba.com/headshots/nba/latest/1040x760/{x}.png")
 
 header= "<h1 style='text-align:center;'>Top 10 Players w/ Highest Lasso to Ridge Difference</h1>"
@@ -845,13 +823,12 @@ p_cards = "".join([
 HTML(f"<div style='display:grid;grid-template-columns:repeat(5,1fr); gap:8px;'>{p_cards}</div>")
 ```
 
-</details>
-
 ▐ The conceptual flaw in how the confidence intervals were calculated might be
-that there is a bottleneck in the amount of players that can be on the court.
-Confidence intervals are percentages indicating where an observation falls.
-There is a cap the probability of being on the court and i don't think that is
-accounted for here.
+that they were calculated from a single alpha. Considering the alpha determines
+the penalty, it seems a little off that we'd select one alpha and sample 400
+times without choosing another optimal alpha. Some samples might have many
+heavily penalized points while another might not be, which exacerbates the model
+uncertainty.
 
 --------------------------------------------------------------------------------
 
